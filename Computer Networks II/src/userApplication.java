@@ -1,4 +1,3 @@
-
 package userApplication;
 
 import java.net.DatagramPacket;
