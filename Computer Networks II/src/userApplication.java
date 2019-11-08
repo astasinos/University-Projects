@@ -1,7 +1,7 @@
 package userApplication;
 
 import java.net.DatagramPacket;
-import java.net.DatagramSocket;
+import java.net.DatagramSocket;				// TO DO : CHECK UNNEEDED IF STATEMENTS IN SOUND
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
