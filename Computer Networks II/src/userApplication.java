@@ -1,9 +1,10 @@
 package userApplication;
 
 import java.net.DatagramPacket;
-import java.net.DatagramSocket;				// TO DO : CHECK UNNEEDED IF STATEMENTS IN SOUND
+import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.net.Socket;
 import java.net.UnknownHostException;
 import javax.sound.sampled.*;
 import java.util.*;
@@ -11,30 +12,45 @@ import java.io.*;
 
 public class userApplication {
 
-	int clientPort = 48012;
-	int serverPort = 38012;
+	int clientPort = 48017;
+	int serverPort = 38017;
 
 	public static void main(String[] args)
 			throws SocketException, IOException, UnknownHostException, LineUnavailableException {
 
 		userApplication self = new userApplication();
 
-		byte[] echoCode = "E1445".getBytes();
-		// self.echoPackets(echoCode,"samples/session1/responseEcho.txt");
+		byte[] copterCode = "Q6745".getBytes();
+		byte[] echoCode = "E3989".getBytes();
+		 self.echoPackets(echoCode,"samples/session1/responseEcho.txt");
 		byte[] imgCode = ("M4181FLOW=ON" + "UDP=1024").getBytes();
 		// self.cameraImage(imgCode, "samples/session1/E1.jpg");
 		int audioPackets = 900;
-		byte[] audioCodeAQ = ("A0604AQL55F" + audioPackets).getBytes();
-		byte[] audioCode = ("A0604L55F" + audioPackets).getBytes();
-		self.getAudio(audioCode, audioPackets, 8000, "DPCM");
-		// self.getAudio(audioCodeAQ,audioPackets, 8000, "AQ-DPCM");
-
+		byte[] audioCodeAQ = ("A4009AQL25F" + audioPackets).getBytes();
+		byte[] audioCode = ("A5444L23F" + audioPackets).getBytes();
+		// self.getAudio(audioCode, audioPackets, 8000, "DPCM");
+		// self.getAudio(audioCodeAQ, audioPackets, 8000, "AQ-DPCM");
+		// self.ithakiCopter(copterCode);
 		// self.audioAQ(audioCodeAQ, audioPackets, serverPort);
 		// self.soundAQDPCM(5509, 1, 38025, 48025);
-		System.out.println();
+		
+
+		// OBD
+
+		String[] pid = { "1F", "0F", "11", "0C", "0D", "05" };
+
+		String[] OBDfiles = { "samples/session1/OBDengineruntime.txt", "UTF-8", "samples/session1/OBDairtemp.txt", "UTF-8",
+				"samples/session1/OBDthrottlepos.txt", "UTF-8", "samples/session1/OBDrpm.txt", "UTF-8",
+				"samples/session1/OBDspeed.txt", "UTF-8", "samples/session1/OBDcooltemp.txt", "UTF-8" };
+		String OBDcode;
+		for (int i = 0; i < pid.length; i++) {
+			OBDcode = "V6302" + "OBD=" + "01" + " " +  pid[i];
+			self.vehicleOBDiagnostics(OBDcode.getBytes(), pid[i], OBDfiles[i]);
+		}
+
 	}
 
-	public void sendPacket(byte[] txbuffer) {
+	public void sendPacket(byte[] txbuffer, int port) {
 
 		DatagramSocket sock = null;
 
@@ -56,7 +72,7 @@ public class userApplication {
 
 		DatagramPacket packet = new DatagramPacket(txbuffer, txbuffer.length);
 		packet.setAddress(serverAddress);
-		packet.setPort(serverPort);
+		packet.setPort(port);
 
 		try {
 			sock.send(packet);
@@ -90,7 +106,7 @@ public class userApplication {
 
 		while (System.currentTimeMillis() < endTime) {
 
-			sendPacket(echoCode);
+			sendPacket(echoCode, serverPort);
 
 			long packetStart = System.currentTimeMillis();
 			long packetEnd;
@@ -176,7 +192,7 @@ public class userApplication {
 			 * 
 			 */
 
-			sendPacket(imgCode);
+			sendPacket(imgCode, serverPort);
 			try {
 				r.receive(q);
 				for (int i = 0; i < rxbuffer.length; i++) {
@@ -231,13 +247,13 @@ public class userApplication {
 		byte[] rxbuffer = new byte[128 + header];
 		DatagramPacket q = new DatagramPacket(rxbuffer, rxbuffer.length);
 
-		int blsb; // LSB byte of beta
-		int bmsb; // MSM byte of beta
-		int baq; // value of beta in AQ-DPCM
+		int bLSB; // LSB byte of beta
+		int bMSB; // MSM byte of beta
+		int bAQ; // value of beta in AQ-DPCM
 
-		int mlsb; // LSB byte of m average
-		int mmsb; // MSM byte of m average
-		int maq;
+		int mLSB; // LSB byte of m average
+		int mMSB; // MSM byte of m average
+		int mAQ;
 
 		int packetNum = audioPackets;
 		int[] nibblesamples = new int[256];
@@ -252,7 +268,6 @@ public class userApplication {
 
 		byte[] audioBufferS = new byte[buffersize * packetNum * 256];
 		int[] demux = new int[256];
-		String progress = "";
 		SourceDataLine lineOut = null;
 
 		try {
@@ -265,34 +280,34 @@ public class userApplication {
 			System.out.println(e);
 		}
 
-		sendPacket(audioCode);
+		sendPacket(audioCode, serverPort);
 
 		for (int j = 0; j < packetNum; j++) {
 
 			try {
 				r.receive(q);
 
-				blsb = (int) (rxbuffer[2] & 0xFF); // chooses the LSB byte of beta from header, &0xFF: to make variable
+				bLSB = (int) (rxbuffer[2] & 0xFF); // chooses the LSB byte of beta from header, &0xFF: to make variable
 													// unsigned
-				bmsb = (int) (rxbuffer[3] & 0xFF); // chooses the MSB byte of beta from header
-				baq = bmsb * 256 + blsb; // 256 because it is 2^8=256
+				bMSB = (int) (rxbuffer[3] & 0xFF); // chooses the MSB byte of beta from header
+				bAQ = bMSB * 256 + bLSB; // 256 because it is 2^8=256
 
-				mlsb = (int) (rxbuffer[0] & 0xFF);
-				mmsb = (int) (rxbuffer[1]);
-				maq = mmsb * 256 + mlsb;
+				mLSB = (int) (rxbuffer[0] & 0xFF);
+				mMSB = (int) (rxbuffer[1]);
+				mAQ = mMSB * 256 + mLSB;
 
 				if (encoding == "AQ-DPCM") {
-					mean = maq;
-					b = baq;
+					mean = mAQ;
+					b = bAQ;
 
 				}
 
 				if ((packetNum - j) % 100 == 0) {
 					System.out.print((packetNum - j) / 10 + "% Remaining\r");
 				}
-
+				System.out.println(b);
 				for (int i = 0 + header; i < rxbuffer.length; i++) {
-					// System.out.print(rxbuffer[i]);
+
 					nibble1 = (byte) ((rxbuffer[i] & 240) >> 4); // 240 -> 11110000 >> 4 cause little-endian
 					nibble2 = (byte) (rxbuffer[i] & 15); // 15 -> 00001111
 
@@ -318,8 +333,6 @@ public class userApplication {
 						sample0 = diff2;
 					}
 
-					// audioBufferS[j*256 + (i-header)*2]=(byte)sample1;
-					// audioBufferS[j*256 + (i-header)*2+1]=(byte)sample2;
 					demux[(i - header) * 2] = sample1;
 					demux[(i - header) * 2 + 1] = sample2;
 
@@ -344,7 +357,6 @@ public class userApplication {
 
 				}
 
-				// System.out.println();
 			} catch (IOException e) {
 				;
 			}
@@ -358,6 +370,132 @@ public class userApplication {
 
 		r.close();
 
+	}
+
+	public void ithakiCopter(byte[] copterCode) {
+
+		DatagramSocket r = null;
+		byte[] rxbuffer = new byte[113];
+		DatagramPacket q = new DatagramPacket(rxbuffer, rxbuffer.length);
+
+		long startTime = System.currentTimeMillis();
+		int interval = 60000; // 5 λεπτά λειτουργίασ
+		long endTime = startTime + interval;
+
+		String leftmotor, rightmotor, altitude, temperature, pressure;
+
+		try {
+			r = new DatagramSocket(48038);
+			r.setSoTimeout(3500); // 3500 to get no timeouts before packet
+
+		} catch (IOException e) {
+			System.out.println(e);
+		}
+
+		while (System.currentTimeMillis() < endTime) {
+
+			try {
+				r.receive(q);
+				String message = new String(rxbuffer, 0, q.getLength());
+				System.out.println(message);
+				leftmotor = message.substring(40, 43);
+				System.out.println("LMOTOR = " + leftmotor);
+				rightmotor = message.substring(51, 54);
+				System.out.println("RMOTOR = " + rightmotor);
+				altitude = message.substring(64, 67);
+				System.out.println("ALTITUDE = " + altitude);
+				temperature = message.substring(80, 86);
+				System.out.println("TEMPERATURE = " + temperature);
+				pressure = message.substring(96, 103);
+				System.out.println("PRESSURE = " + pressure);
+
+			} catch (IOException e) {
+				System.out.println(e);
+			}
+
+		}
+		r.close();
+
+	}
+
+	public void vehicleOBDiagnostics(byte[] OBDcode, String pid, String filename) {
+
+		long startTime = System.currentTimeMillis();
+		int interval = 1000; // 5 λεπτά λειτουργίας
+		long endTime = startTime + interval;
+
+		byte[] rxbuffer = new byte[113];
+		DatagramPacket q = new DatagramPacket(rxbuffer, rxbuffer.length);
+
+		DatagramSocket r = null;
+		PrintWriter file = null;
+		try {
+			file = new PrintWriter(filename, "UTF-8");
+			r = new DatagramSocket(clientPort);
+			r.setSoTimeout(3500); // 3500 to get no timeouts before packet
+
+		} catch (IOException e) {
+			System.out.println(e);
+		}
+
+		int formula;
+		String units;
+		int xx,yy;
+		System.out.println("OUTPUTTING CODE : " + pid);
+		String message = "";
+		while (System.currentTimeMillis() < endTime) {
+
+			try {
+
+				sendPacket(OBDcode, serverPort);
+				r.receive(q);
+				message = new String(rxbuffer, 0, q.getLength());
+				System.out.println(message);
+				//System.out.println(message.substring(6,8)); // XX
+
+			} catch (IOException e) {
+				System.out.println(e);
+
+			}
+			
+			xx = Integer.parseInt(message.substring(6,8), 16 );
+			
+			
+			switch(pid) {
+			
+			case "1F":
+				
+				yy = Integer.parseInt(message.substring(9,11), 16 );
+				formula = 256 * xx + yy;
+				System.out.println("Engine runtime : " + formula + " sec");
+				break;
+			case "0F":
+				//xx = Integer.parseInt(message.substring(6,8), 16 );
+				formula = xx - 40;
+				System.out.println("Intake air temperature: " + formula + " (deg C)");
+				break;
+			case "11":
+				formula = xx*100/255;
+				System.out.println("Throttle position:  " + formula + " %");
+				break;
+			case "0C":
+				yy = Integer.parseInt(message.substring(9,11), 16 );
+				formula  = ((xx*256)+yy)/4;
+				System.out.println("Engine RPM:  " + formula + " rpm");
+				break;
+			case "0D":
+				formula = xx;
+				System.out.println("Vehicle speed:   " + formula + " km/h");
+				break;
+			case "05":
+				formula = xx - 40;
+				System.out.println("Coolant temperature: " + formula + " (deg) C");
+				break;
+			
+			}
+		}
+		r.close();
+		file.close();
 	}
 
 }
