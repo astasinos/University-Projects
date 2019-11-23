@@ -9,6 +9,8 @@ import java.net.UnknownHostException;
 import javax.sound.sampled.*;
 import java.util.*;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class userApplication {
 
@@ -22,7 +24,7 @@ public class userApplication {
 
 		byte[] copterCode = "Q6745".getBytes();
 		byte[] echoCode = "E3989".getBytes();
-		 self.echoPackets(echoCode,"samples/session1/responseEcho.txt");
+		// self.echoPackets(echoCode,"samples/session1/responseEcho.txt");
 		byte[] imgCode = ("M4181FLOW=ON" + "UDP=1024").getBytes();
 		// self.cameraImage(imgCode, "samples/session1/E1.jpg");
 		int audioPackets = 900;
@@ -37,7 +39,7 @@ public class userApplication {
 
 		// OBD
 
-		String[] pid = { "1F", "0F", "11", "0C", "0D", "05" };
+	/*	String[] pid = { "1F", "0F", "11", "0C", "0D", "05" };
 
 		String[] OBDfiles = { "samples/session1/OBDengineruntime.txt", "UTF-8", "samples/session1/OBDairtemp.txt", "UTF-8",
 				"samples/session1/OBDthrottlepos.txt", "UTF-8", "samples/session1/OBDrpm.txt", "UTF-8",
@@ -47,7 +49,11 @@ public class userApplication {
 			OBDcode = "V6302" + "OBD=" + "01" + " " +  pid[i];
 			self.vehicleOBDiagnostics(OBDcode.getBytes(), pid[i], OBDfiles[i]);
 		}
-
+	*/
+		
+		
+		long arr[] = {800,1200,320,4500,3500,1300,2700,700,1600,2400,900,1900};
+		self.throughput(8, "a.txt","b.txt");
 	}
 
 	public void sendPacket(byte[] txbuffer, int port) {
@@ -84,6 +90,8 @@ public class userApplication {
 
 	public void echoPackets(byte[] echoCode, String filename) {
 
+		
+		
 		long responseTime;
 		ArrayList<Long> responseTimes = new ArrayList<Long>();
 
@@ -141,6 +149,90 @@ public class userApplication {
 		}
 
 		r.close();
+	}
+	
+	public void throughput(int interval,String readfile,String writefile) throws IOException { // interval for 8,16 or 32
+		
+		
+		ArrayList<String> responseTimesStr = new ArrayList<String>(Files.readAllLines(Paths.get("a.txt"))); //new ArrayList<Long>();
+		ArrayList<Long> responseTimes = new ArrayList<Long>();
+		for(String k : responseTimesStr) {
+			
+			responseTimes.add(Long.parseLong(k,10));
+			System.out.println(Long.parseLong(k,10));
+			
+		}
+		
+		
+		
+		ArrayList<Float> throughputs = new ArrayList<Float>();
+		
+		ArrayList<Long> summation = new ArrayList<Long>();
+		long sum = 0;
+		for(int i = 0 ; i < responseTimes.size() ; i++) {
+			
+			for(int j = 0; j <= i ; j++) {
+													//long arr[] = {800,1200,320,4500,3500,1300,2700,700,1600,2400,900,1900};
+				sum += responseTimes.get(j);
+				
+			}
+			summation.add(sum);
+			sum = 0;
+			
+		}
+		
+		float packetspersecond = 0;
+		long lowerlimit = 0;
+		long upperlimit = 1000 * interval;
+		
+		while(upperlimit < summation.get(summation.size()-1) + 1000) {//for(int i = 0; i < summation.size(); i++) {
+			
+			for(int j = 0 ; j < summation.size() ; j++) {
+				
+				if((summation.get(j) > lowerlimit) && (summation.get(j) < upperlimit)) {
+					System.out.println("I took " + summation.get(j) + " with lowerlimit " + lowerlimit + " and upperlimit " + upperlimit);
+					packetspersecond++;
+					
+					
+				}	
+				
+				
+				// 800,2000,2320,6820,10320,11620,14320,15020,16620,19020,19920,21820,
+				
+			}
+			
+			lowerlimit += 1000;
+			upperlimit += 1000;
+			throughputs.add(packetspersecond/interval);
+			packetspersecond = 0;
+			
+			
+			
+		}
+		
+		try {
+
+			PrintWriter writer = new PrintWriter(writefile, "UTF-8");
+			for (long i : summation) {
+				//writer.println(thput);
+				System.out.print(i + ",");
+
+			}
+			
+			
+			
+			
+			System.out.println();
+			for (float thput : throughputs) {
+				writer.println(thput);
+				System.out.println(thput);
+
+			}
+			writer.close(); // Κλείσιμο αρχείου
+
+		} catch (Exception x) {;}
+		
+		
 	}
 
 	public void cameraImage(byte[] imgCode, String imgFile) {
