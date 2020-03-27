@@ -8,8 +8,8 @@
 
 
 #define QUEUESIZE 10
-#define LOOP 20000
-
+//#define LOOP 20000
+int LOOP;
 void *producer (void *args);
 void *consumer (void *args);
 
@@ -33,9 +33,9 @@ typedef struct
     pthread_cond_t *notFull, *notEmpty;
 } queue;
 
-int id = 1; // Used to identify each workFunc added and removed from the queue
-int count = 0;  // A counter counting the number of items that have been consumed. It is used in calculating the average
-double average = 0;  // Average return time
+int id = 1;
+int count = 0;
+double average = 0;
 
 typedef void * (*work)(void *); // For readability
 
@@ -102,7 +102,7 @@ int main (int argc, char *argv[])
 
     producer_count =  atoi(argv[1]);
     consumer_count =  atoi(argv[2]);
-    
+    LOOP = atoi(argv[3]);
 
     pthread_t producer_threads[producer_count];
     pthread_t consumer_threads[consumer_count];
@@ -205,7 +205,7 @@ void *consumer (void *q)
         gettimeofday(&t_end, NULL);
 
 
-        //task.work(task.arg);
+        
         int taskid = task.id;
 
         queueDel (fifo, &task);
