@@ -1,3 +1,14 @@
+/*
+
+Stasinos Alkiviadis 
+Producer - Consumer
+First project for Real Time Embedded Systems at AUTh
+Last revised: 27/3/2020
+*/
+
+
+
+
 #include <pthread.h>
 #include <stdio.h>
 #include <unistd.h>
