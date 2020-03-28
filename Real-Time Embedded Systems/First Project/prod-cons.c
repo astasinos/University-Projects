@@ -3,7 +3,7 @@
 Stasinos Alkiviadis 
 Producer - Consumer
 First project for Real Time Embedded Systems at AUTh
-Last revised: 27/3/2020
+Last revised: 28/3/2020
 */
 
 
@@ -112,7 +112,7 @@ int main (int argc, char *argv[])
     // Number of producer and consumer threads
 
     if(argc != 3) {
-        printf("Usage: ./prod-cons <PRODUCER NUMBER> <CONSUMER NUMBER>\n\n");
+        printf("\nUsage: ./prod-cons <PRODUCER NUMBER> <CONSUMER NUMBER>\n\n");
         return -1;
 
     }
@@ -230,7 +230,7 @@ void *consumer (void *q)
         long long e = (long long)((long long)t_end.tv_sec * 1000000 + (long long)t_end.tv_usec);
         long long dt =  (long long)(e-s);
         average = (double)(average * count + dt)/(double)(++count);
-        printf("\nconsumer: I deleted an item in %lld microseconds and average time is %f  %d\n",dt,average,consumer_count);
+        printf("\nconsumer: I deleted item no %d in %lld microseconds and average time is %f\n",count,dt,average);
         
 
         pthread_mutex_unlock (fifo->mut);
