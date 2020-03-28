@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+# Note this is unfortunately quickly written and really hacky python but it gets the job done
+
+
 import subprocess
 import sys
 import time
