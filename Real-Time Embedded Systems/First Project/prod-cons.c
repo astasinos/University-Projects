@@ -1,6 +1,6 @@
 /*
 
-Stasinos Alkiviadis 
+Stasinos Alkiviadis AEM 9214
 Producer - Consumer
 First project for Real Time Embedded Systems at AUTh
 Last revised: 28/3/2020
