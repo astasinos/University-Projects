@@ -1,4 +1,5 @@
-##First project on Real Time Embedded Systems.
+## First project on Real Time Embedded Systems.
+---  
 
 Compile with `gcc prod-cons.c -o prod-cons -pthread -lm`
 
