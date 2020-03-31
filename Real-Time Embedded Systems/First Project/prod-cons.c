@@ -3,7 +3,7 @@
 Stasinos Alkiviadis AEM 9214
 Producer - Consumer
 First project for Real Time Embedded Systems at AUTh
-Last revised: 28/3/2020
+Last revised: 29/3/2020
 */
 
 // Compile with gcc prod-cons.c -o prod-cons -pthread -lm
