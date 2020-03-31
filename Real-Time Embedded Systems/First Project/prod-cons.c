@@ -173,8 +173,8 @@ void *producer (void *q)
         }
 
 
-        task.arg = (unsigned int)pthread_self() % 20000; // Change this
-        task.work = tasks[(unsigned int)pthread_self() % 4];
+        task.arg = count + (unsigned int)pthread_self() % 5000; // Change this
+        task.work = tasks[count % 4];
         
 
 
