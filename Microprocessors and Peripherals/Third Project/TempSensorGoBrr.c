@@ -320,7 +320,7 @@ int main(void) {
 					showMeanTen = 0;
 						tenSec = 10;
 						pulsePrint = 1;
-						printZesthKryo = 0;
+						printZesthKryo = 1;		// CHANGEDD THIS
 						
 			
 				}
