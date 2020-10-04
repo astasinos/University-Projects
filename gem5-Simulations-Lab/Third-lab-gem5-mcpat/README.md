@@ -82,37 +82,37 @@
 Στο ερώτημα αυτό παρουσιάζονται γραφήματα για το Peak **Power** και το συνολικό **Area** μεταβάλλοντας κάθε φορά μόνο μία παράμετρο απο τις πιθανές ενός Cache configuration ( Associativity,Block size etc.). Τα παρακάτω γραφήματα αντικατοπτρίζουν την επίδραση των παραμέτρων αυτών.
 
 <p align="center">
-        <img  src="https://github.com/astasinos/University-Projects/gem5-Simulations-Lab/blob/master/Third-lab-gem5-mcpat/Images/Blocksize.png" height="420" width="800">
+        <img  src="https://github.com/astasinos/University-Projects/blob/master/gem5-Simulations-Lab/Third-lab-gem5-mcpat/Images/Blocksize.png" height="420" width="800">
 
 </p>
 
 <p align="center">
-        <img  src="https://github.com/astasinos/University-Projects/gem5-Simulations-Lab/blob/master/Third-lab-gem5-mcpat/Images/L1Dsize.png" height="420" width="800">
+        <img  src="https://github.com/astasinos/University-Projects/blob/master/gem5-Simulations-Lab/Third-lab-gem5-mcpat/Images/L1Dsize.png" height="420" width="800">
 
 </p>
 
 <p align="center">
-        <img  src="https://github.com/astasinos/University-Projects/gem5-Simulations-Lab/blob/master/Third-lab-gem5-mcpat/Images/L1Isize.png" height="420" width="800">
+        <img  src="https://github.com/astasinos/University-Projects/blob/master/gem5-Simulations-Lab/Third-lab-gem5-mcpat/Images/L1Isize.png" height="420" width="800">
 
 </p>
 
 <p align="center">
-        <img  src="https://github.com/astasinos/University-Projects/gem5-Simulations-Lab/blob/master/Third-lab-gem5-mcpat/Images/L2size.png" height="420" width="800">
+        <img  src="https://github.com/astasinos/University-Projects/blob/master/gem5-Simulations-Lab/Third-lab-gem5-mcpat/Images/L2size.png" height="420" width="800">
 
 </p>
 
 <p align="center">
-        <img  src="https://github.com/astasinos/University-Projects/gem5-Simulations-Lab/blob/master/Third-lab-gem5-mcpat/Images/L1Dassoc.png" height="420" width="800">
+        <img  src="https://github.com/astasinos/University-Projects/blob/master/gem5-Simulations-Lab/Third-lab-gem5-mcpat/Images/L1Dassoc.png" height="420" width="800">
 
 </p>
 
 <p align="center">
-        <img  src="https://github.com/astasinos/University-Projects/gem5-Simulations-Lab/blob/master/Third-lab-gem5-mcpat/Images/L1Iassoc.png" height="420" width="800">
+        <img  src="https://github.com/astasinos/University-Projects/blob/master/gem5-Simulations-Lab/Third-lab-gem5-mcpat/Images/L1Iassoc.png" height="420" width="800">
 
 </p>
 
 <p align="center">
-        <img  src="https://github.com/astasinos/University-Projects/gem5-Simulations-Lab/blob/master/Third-lab-gem5-mcpat/Images/L2assoc.png" height="420" width="800">
+        <img  src="https://github.com/astasinos/University-Projects/blob/master/gem5-Simulations-Lab/Third-lab-gem5-mcpat/Images/L2assoc.png" height="420" width="800">
 
 </p>
 
@@ -127,52 +127,52 @@
 Επιπλέον λόγω του παραπάνω ,καθώς και του ότι δε προβλέψαμε πως το **Cache Line Size** επηρεάζει τόσο έντονα το _Area_ οπότε και το _EDAP_,οι μετρήσεις αυτές δε συμπεριλαμβάνονται στην αναζήτηση του _optimal EDAP_ αφού όσες <<τρέχαν>> το _Cache line size_ τους ήταν τέτοιο που εκτόξευε το EDAP.Επομένως,παρακάτω φαίνονται τα αποτελέσματα για όλες τις άλλες εκτελέσεις του δεύτερου Εργαστηρίου.
 
 <p align="center">
-        <img  src="https://github.com/astasinos/University-Projects/gem5-Simulations-Lab/blob/master/Third-lab-gem5-mcpat/Images/bzip1.png" height="420" width="800">
+        <img  src="https://github.com/astasinos/University-Projects/blob/master/gem5-Simulations-Lab/Third-lab-gem5-mcpat/Images/bzip1.png" height="420" width="800">
 
 </p>
 
 <p align="center">
-        <img  src="https://github.com/astasinos/University-Projects/gem5-Simulations-Lab/blob/master/Third-lab-gem5-mcpat/Images/bzip2.png" height="420" width="800">
+        <img  src="https://github.com/astasinos/University-Projects/blob/master/gem5-Simulations-Lab/Third-lab-gem5-mcpat/Images/bzip2.png" height="420" width="800">
 
 </p>
 
 <p align="center">
-        <img  src="https://github.com/astasinos/University-Projects/gem5-Simulations-Lab/blob/master/Third-lab-gem5-mcpat/Images/sjeng1.png" height="420" width="800">
+        <img  src="https://github.com/astasinos/University-Projects/blob/master/gem5-Simulations-Lab/Third-lab-gem5-mcpat/Images/sjeng1.png" height="420" width="800">
 
 </p>
 
 <p align="center">
-        <img  src="https://github.com/astasinos/University-Projects/gem5-Simulations-Lab/blob/master/Third-lab-gem5-mcpat/Images/sjeng2.png" height="420" width="800">
+        <img  src="https://github.com/astasinos/University-Projects/blob/master/gem5-Simulations-Lab/Third-lab-gem5-mcpat/Images/sjeng2.png" height="420" width="800">
 
 </p>
 
 <p align="center">
-        <img  src="https://github.com/astasinos/University-Projects/gem5-Simulations-Lab/blob/master/Third-lab-gem5-mcpat/Images/libm1.png" height="420" width="800">
+        <img  src="https://github.com/astasinos/University-Projects/blob/master/gem5-Simulations-Lab/Third-lab-gem5-mcpat/Images/libm1.png" height="420" width="800">
 
 </p>
 
 <p align="center">
-        <img  src="https://github.com/astasinos/University-Projects/gem5-Simulations-Lab/blob/master/Third-lab-gem5-mcpat/Images/libm2.png" height="420" width="800">
+        <img  src="https://github.com/astasinos/University-Projects/blob/master/gem5-Simulations-Lab/Third-lab-gem5-mcpat/Images/libm2.png" height="420" width="800">
 
 </p>
 
 <p align="center">
-        <img  src="https://github.com/astasinos/University-Projects/gem5-Simulations-Lab/blob/master/Third-lab-gem5-mcpat/Images/hmmer1.png" height="420" width="800">
+        <img  src="https://github.com/astasinos/University-Projects/blob/master/gem5-Simulations-Lab/Third-lab-gem5-mcpat/Images/hmmer1.png" height="420" width="800">
 
 </p>
 
 <p align="center">
-        <img  src="https://github.com/astasinos/University-Projects/gem5-Simulations-Lab/blob/master/Third-lab-gem5-mcpat/Images/hmmer2.png" height="420" width="800">
+        <img  src="https://github.com/astasinos/University-Projects/blob/master/gem5-Simulations-Lab/Third-lab-gem5-mcpat/Images/hmmer2.png" height="420" width="800">
 
 </p>
 
 <p align="center">
-        <img  src="https://github.com/astasinos/University-Projects/gem5-Simulations-Lab/blob/master/Third-lab-gem5-mcpat/Images/mcf1.png" height="420" width="800">
+        <img  src="https://github.com/astasinos/University-Projects/blob/master/gem5-Simulations-Lab/Third-lab-gem5-mcpat/Images/mcf1.png" height="420" width="800">
 
 </p>
 
 <p align="center">
-        <img  src="https://github.com/astasinos/University-Projects/gem5-Simulations-Lab/blob/master/Third-lab-gem5-mcpat/Images/mcf2.png" height="420" width="800">
+        <img  src="https://github.com/astasinos/University-Projects/blob/master/gem5-Simulations-Lab/Third-lab-gem5-mcpat/Images/mcf2.png" height="420" width="800">
 
 </p>
 
