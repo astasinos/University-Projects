@@ -242,7 +242,7 @@ ii.Ο τύπος δεν αναγράφεται στο αρχείο.
 Αρχικά παρατίθεται μια σύντομη περιγραφή των διάφορων μοντέλων **In Order CPUs** που υλοποιούνται στον _gem5_,βασισμένη κυρίως σε πληροφορίες που αντλήσαμε απο το _ARM University_.[[1](##1)] Συγκεκριμένα παρουσιάζονται τα μοντέλα **AtomicSimpleCPU**,**TimingSimpleCPU** και **MinorCPU**.
 
 
-![CPUs](https://github.com/astasinos/University-Projects/gem5-Simulations-Lab/blob/master/First-lab-gem5/images/cpus.png)
+![CPUs](https://github.com/astasinos/University-Projects/blob/master/gem5-Simulations-Lab/First-lab-gem5/images/cpus.png)
 
 Ο _AtomicSimpleCPU_ μαζί με τον _TimingSimpleCPU_ είναι βασισμένοι στον τύπο _BaseSimpleCPU_ όπως φαίνεται και στην παραπάνω εικόνα.Τα μοντέλα αυτά χρησιμοποιούνται κυρίως για απλοϊκές προσομοιώσεις παραλείποντας πολλές λεπτομέρειες,όταν θέλουμε να φτάσουμε άμεσα και γρήγορα σε συγκεκριμένο κομμάτι της προσομοίωσης που μας ενδιαφέρει περισσότερο.
 
