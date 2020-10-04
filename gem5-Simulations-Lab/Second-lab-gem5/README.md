@@ -57,15 +57,15 @@ iii)Συνολικά _miss rates_ για κάθε τύπο **_caches_**
 |specsjeng |	10.270810|	0.121829|	0.000020|	0.999979|	0.513541|
 
 <p align="center">
-<img  src="https://github.com/astasinos/University-Projects/gem5-Simulations-Lab/blob/master/Second-lab-gem5/images/Screenshot_1.png"  height="320" width="600">
+<img  src="https://github.com/astasinos/University-Projects/blob/master/gem5-Simulations-Lab/Second-lab-gem5/images/Screenshot_1.png"  height="320" width="600">
         
-<img src="https://github.com/astasinos/University-Projects/gem5-Simulations-Lab/blob/master/Second-lab-gem5/images/l1Imissrate_er1.png"   height="320" width="600">  
+<img src="https://github.com/astasinos/University-Projects/blob/master/gem5-Simulations-Lab/Second-lab-gem5/images/l1Imissrate_er1.png"   height="320" width="600">  
 
-<img src="https://github.com/astasinos/University-Projects/gem5-Simulations-Lab/blob/master/Second-lab-gem5/images/l1dmissrate_er1.png"   height="320" width="600"> 
+<img src="https://github.com/astasinos/University-Projects/blob/master/gem5-Simulations-Lab/Second-lab-gem5/images/l1dmissrate_er1.png"   height="320" width="600"> 
 
-<img src="https://github.com/astasinos/University-Projects/gem5-Simulations-Lab/blob/master/Second-lab-gem5/images/l2missrate_er1.png"   height="320" width="600"> 
+<img src="https://github.com/astasinos/University-Projects/blob/master/gem5-Simulations-Lab/Second-lab-gem5/images/l2missrate_er1.png"   height="320" width="600"> 
 
-<img src="https://github.com/astasinos/University-Projects/gem5-Simulations-Lab/blob/master/Second-lab-gem5/images/simsecond_er1.png"   height="320" width="600">
+<img src="https://github.com/astasinos/University-Projects/blob/master/gem5-Simulations-Lab/Second-lab-gem5/images/simsecond_er1.png"   height="320" width="600">
 
 </p>
 
@@ -150,41 +150,41 @@ system.cpu_clk_domain.clock 1000
 Μας ζητήθηκε να βρούμε το **_CPI_** αλλάζοντας κάθε φορά μόνο μία από τις παραπάνω παραμέτρους. Με τον τρόπο αυτό είναι εφικτό να γίνει μια καλή εκτίμηση σχετικά με το πως η κάθε μια από αυτές επιδρά στην απόδοση .Κατασκευάσαμε αρχικά το **Bash script** `makeall.sh` το οποίο παίρνει κάθε benchmark εκτελεί όλους τους δυνατούς συνδυασμούς μεταβάλλοντας κάθε φορά **μόνο** μία παράμετρο.Στη συνέχεια το ίδιο φτιάχνει τα κατάλληλα config files τα οποία και περνά στο _read_results.sh_ . Τα αποτελέσματα που πήραμε παρουσιάζονται αναλυτικά με τα  παρακάτω διαγράμματα και σχολιάζονται με βάση τις γνώσεις που αντλήσαμε απο τη βιβλιογραφία [[3](##cpitype)].
  
  <p align="center">
-        <img  src="https://github.com/astasinos/University-Projects/gem5-Simulations-Lab/blob/master/Second-lab-gem5/images/cachesize_line.png" height="320" width="600">
+        <img  src="https://github.com/astasinos/University-Projects/blob/mastergem5-Simulations-Lab//Second-lab-gem5/images/cachesize_line.png" height="320" width="600">
 
 </p>
 
 Παρατηρούμε ότι με αύξηση του **Cache line size** αρχικά τα **_CPI_** μειώνονται , με τα **_specsjeng_** και **_speclibm_** να επηρεάζονται σε μεγαλύτερο βαθμό. Αυτό οφείλεται στο γεγονός ότι με αξιοποιείται η χωρική τοπικότητα με αποτέλεσμα να μειώνεται αισθητά ο ρυθμός των αστοχιών. Ωστόσο , μεγαλύτερη αύξηση συνεπάγεται υψηλότερη ποινή αστοχίας , κάτι που επιδρά αρνητικά στην τιμή του _CPI_ για ορισμένα **_benchmarks_** μετά απο κάποιο σημείο . 
 
 <p align="center">
-        <img  src="https://github.com/astasinos/University-Projects/gem5-Simulations-Lab/blob/master/Second-lab-gem5/images/L1D_size.png" height="320" width="600">
+        <img  src="https://github.com/astasinos/University-Projects/blob/master/gem5-Simulations-Lab/Second-lab-gem5/images/L1D_size.png" height="320" width="600">
 
 </p>
 
 <p align="center">
-        <img  src="https://github.com/astasinos/University-Projects/gem5-Simulations-Lab/blob/master/Second-lab-gem5/images/L1I_size.png" height="320" width="600">
+        <img  src="https://github.com/astasinos/University-Projects/blob/master/gem5-Simulations-Lab/Second-lab-gem5/images/L1I_size.png" height="320" width="600">
 
 </p>
 
 <p align="center">
-        <img  src="https://github.com/astasinos/University-Projects/gem5-Simulations-Lab/blob/master/Second-lab-gem5/images/L2_size.png" height="320" width="600">
+        <img  src="https://github.com/astasinos/University-Projects/blob/master/gem5-Simulations-Lab/Second-lab-gem5/images/L2_size.png" height="320" width="600">
 
 </p>
 
 Όσον αφορά την επίδραση του μεγέθους των κρυφών μνημών , δεν υπάρχει κάποια σημαντική μεταβολή στην απόδοση. Πιο έντονη επίδραση παρατηρείται από την αλλαγή του _L1 instruction cache size_ στο **_specmcf_** . Το μεγαλύτερο μέγεθος μιας κρυφής μνήμης ελλατώνει το ρυθμό αστοχίας , ενω παράλληλα αυξάνει και το χρόνο ευστοχίας , γεγονός που δικαιολογεί τις πολύ μικρές αυξομοιώσεις του _CPI_ .
 
 <p align="center">
-        <img  src="https://github.com/astasinos/University-Projects/gem5-Simulations-Lab/blob/master/Second-lab-gem5/images/L1D_assoc.png" height="320" width="600">
+        <img  src="https://github.com/astasinos/University-Projects/blob/master/gem5-Simulations-Lab/Second-lab-gem5/images/L1D_assoc.png" height="320" width="600">
 
 </p>
 
 <p align="center">
-        <img  src="https://github.com/astasinos/University-Projects/gem5-Simulations-Lab/blob/master/Second-lab-gem5/images/L1I_assoc.png" height="320" width="600">
+        <img  src="https://github.com/astasinos/University-Projects/blob/master/gem5-Simulations-Lab/Second-lab-gem5/images/L1I_assoc.png" height="320" width="600">
 
 </p>
 
 <p align="center">
-        <img  src="https://github.com/astasinos/University-Projects/gem5-Simulations-Lab/blob/master/Second-lab-gem5/images/L2_assoc.png" height="320" width="600">
+        <img  src="https://github.com/astasinos/University-Projects/blob/master/gem5-Simulations-Lab/Second-lab-gem5/images/L2_assoc.png" height="320" width="600">
 
 </p>
 
@@ -262,52 +262,52 @@ Example 1           |  Example 2
 
 
  <p align="center">
-        <img  src="https://github.com/astasinos/University-Projects/gem5-Simulations-Lab/blob/master/Second-lab-gem5/images/bzipvscost.jpg" height="420" width="800">
+        <img  src="https://github.com/astasinos/University-Projects/blob/master/gem5-Simulations-Lab/Second-lab-gem5/images/bzipvscost.jpg" height="420" width="800">
 
 </p>
 
 <p align="center">
-        <img  src="https://github.com/astasinos/University-Projects/gem5-Simulations-Lab/blob/master/Second-lab-gem5/images/bzipcosimg.jpg" height="420" width="800">
+        <img  src="https://github.com/astasinos/University-Projects/blob/master/gem5-Simulations-Lab/Second-lab-gem5/images/bzipcosimg.jpg" height="420" width="800">
 
 </p>
 
 <p align="center">
-        <img  src="https://github.com/astasinos/University-Projects/gem5-Simulations-Lab/blob/master/Second-lab-gem5/images/sjeng1.png" height="420" width="800">
+        <img  src="https://github.com/astasinos/University-Projects/blob/master/gem5-Simulations-Lab/Second-lab-gem5/images/sjeng1.png" height="420" width="800">
 
 </p>
 
 <p align="center">
-        <img  src="https://github.com/astasinos/University-Projects/gem5-Simulations-Lab/blob/master/Second-lab-gem5/images/sjeng2.png" height="420" width="800">
+        <img  src="https://github.com/astasinos/University-Projects/blob/master/gem5-Simulations-Lab/Second-lab-gem5/images/sjeng2.png" height="420" width="800">
 
 </p>
 
 <p align="center">
-        <img  src="https://github.com/astasinos/University-Projects/gem5-Simulations-Lab/blob/master/Second-lab-gem5/images/hmmer1.png" height="420" width="800">
+        <img  src="https://github.com/astasinos/University-Projects/blob/master/gem5-Simulations-Lab/Second-lab-gem5/images/hmmer1.png" height="420" width="800">
 
 </p>
 
 <p align="center">
-        <img  src="https://github.com/astasinos/University-Projects/gem5-Simulations-Lab/blob/master/Second-lab-gem5/images/hmmer2.png" height="420" width="800">
+        <img  src="https://github.com/astasinos/University-Projects/blob/master/gem5-Simulations-Lab/Second-lab-gem5/images/hmmer2.png" height="420" width="800">
 
 </p>
 
 <p align="center">
-        <img  src="https://github.com/astasinos/University-Projects/gem5-Simulations-Lab/blob/master/Second-lab-gem5/images/libm1.png" height="420" width="800">
+        <img  src="https://github.com/astasinos/University-Projects/gem5-Simulations-Lab/Second-lab-gem5/images/libm1.png" height="420" width="800">
 
 </p>
 
 <p align="center">
-        <img  src="https://github.com/astasinos/University-Projects/gem5-Simulations-Lab/blob/master/Second-lab-gem5/images/libm2.png" height="420" width="800">
+        <img  src="https://github.com/astasinos/University-Projects/blob/master/gem5-Simulations-Lab/blob/master/Second-lab-gem5/images/libm2.png" height="420" width="800">
 
 </p>
 
 <p align="center">
-        <img  src="https://github.com/astasinos/University-Projects/gem5-Simulations-Lab/blob/master/Second-lab-gem5/images/mcf1.png" height="420" width="800">
+        <img  src="https://github.com/astasinos/University-Projects/blob/master/gem5-Simulations-Lab/Second-lab-gem5/images/mcf1.png" height="420" width="800">
 
 </p>
 
 <p align="center">
-        <img  src="https://github.com/astasinos/University-Projects/gem5-Simulations-Lab/blob/master/Second-lab-gem5/images/mcf2.png" height="420" width="800">
+        <img  src="https://github.com/astasinos/University-Projects/blob/master/gem5-Simulations-Lab/Second-lab-gem5/images/mcf2.png" height="420" width="800">
 
 </p>
 
