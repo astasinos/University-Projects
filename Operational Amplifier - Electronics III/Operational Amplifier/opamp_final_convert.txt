@@ -1,0 +1,22 @@
+The conversion of the project was successful.
+
+The new directory structure is as follows:
+
+C:/Users/dawnm/Desktop/opamp-final/1
+    opamp_final.opj
+    opamp_final.dsn
+    opamp_final.dbk
+C:/Users/dawnm/Desktop/opamp-final/1/opamp_final-PSpiceFiles
+    opamp_final.ind
+    opamp_final.lib
+C:/Users/dawnm/Desktop/opamp-final/1/opamp_final-PSpiceFiles/SCHEMATIC1
+    SCHEMATIC1.als
+    SCHEMATIC1.net
+    simprof.sim
+C:/Users/dawnm/Desktop/opamp-final/1/opamp_final-PSpiceFiles/SCHEMATIC1/simprof
+    simprof.1op
+    simprof.cir
+    simprof.mrk
+    simprof.out
+    simprof.out.1
+    simprof.prb

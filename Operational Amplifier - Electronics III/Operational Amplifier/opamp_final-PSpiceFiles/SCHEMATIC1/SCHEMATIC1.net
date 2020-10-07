@@ -1,0 +1,49 @@
+* source OPAMP_FINAL
+V_Vdd         N00316 0 1.842
+C_Cc         N01142 N01402  0.9p  
+C_CL         0 N01402  2.14pF  
+V_V2         N02128 0 -1.842
+M_M3         N00758 N00758 N00316 N00316 pfet  
++ L=1u  
++ W=1u         
+M_M4         N01142 N00758 N00316 N00316 pfet  
++ L=1u  
++ W=1u         
+M_M6         N01402 N01142 N00316 N00316 pfet  
++ L=1u  
++ W=8u         
+M_M1         N00758 0 N01219 N01219 nfet  
++ L=1u  
++ W=3.5u         
+M_M2         N01142 N01643 N01219 N01219 nfet  
++ L=1u  
++ W=3.5u         
+M_M5         N01219 N01913 N02128 N02128 nfet  
++ L=1u  
++ W=2.3844u         
+M_M7         N01402 N01913 N02128 N02128 nfet  
++ L=1u  
++ W=6.5u         
+M_M8         N01913 N01913 N02128 N02128 nfet  
++ L=1u  
++ W=2.3844u         
+M_M13         N02128 N08621 N08621 N08621 nfet  
++ L=1u  
++ W=1u         
+M_M14         N08664 N08621 N084640 N084640 nfet  
++ L=1u  
++ W=4u         
+R_Rb         N02128 N084640  25k  
+M_M12         N01913 N08039 N08664 N08664 nfet  
++ L=1u  
++ W=1u         
+M_M9         N08039 N01913 N00316 N00316 pfet  
++ L=1u  
++ W=1u         
+M_M10         N01913 N01913 N00316 N00316 pfet  
++ L=1u  
++ W=1u         
+M_M11         N08621 N08039 N08039 N08039 nfet  
++ L=1u  
++ W=1u         
+V_V3         N01643 0 DC 0Vdc AC 0.1Vac 

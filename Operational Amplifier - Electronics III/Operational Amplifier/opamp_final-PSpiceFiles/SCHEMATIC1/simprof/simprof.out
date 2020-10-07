@@ -1,0 +1,195 @@
+
+**** 01/09/20 18:48:31 ******* PSpice Lite (March 2016) ******* ID# 10813 ****
+
+ ** Profile: "SCHEMATIC1-simprof"  [ C:\Users\dawnm\Desktop\Steilto\opamp-final\Operational Amplifier\opamp_final-pspicefiles\schemat
+
+
+ ****     CIRCUIT DESCRIPTION
+
+
+******************************************************************************
+
+
+
+
+** Creating circuit file "simprof.cir" 
+** WARNING: THIS AUTOMATICALLY GENERATED FILE MAY BE OVERWRITTEN BY SUBSEQUENT SIMULATIONS
+
+*Libraries: 
+* Profile Libraries :
+* Local Libraries :
+.LIB "../../../opamp_final-pspicefiles/opamp_final.lib" 
+* From [PSPICE NETLIST] section of C:\Users\dawnm\AppData\Roaming\SPB_Data\cdssetup\OrCAD_PSpice\17.2.0\PSpice.ini file:
+.lib "nomd.lib" 
+
+*Analysis directives: 
+.AC DEC 10 10 100meg
+.OPTIONS ADVCONV
+.PROBE64 V(*) I(*) W(*) D(*) NOISE(*) 
+.INC "..\SCHEMATIC1.net" 
+
+
+
+**** INCLUDING SCHEMATIC1.net ****
+* source OPAMP_FINAL
+V_Vdd         N00316 0 1.842
+C_Cc         N01142 N01402  0.9p  
+C_CL         0 N01402  2.14pF  
+V_V2         N02128 0 -1.842
+M_M3         N00758 N00758 N00316 N00316 pfet  
++ L=1u  
++ W=1u         
+M_M4         N01142 N00758 N00316 N00316 pfet  
++ L=1u  
++ W=1u         
+M_M6         N01402 N01142 N00316 N00316 pfet  
++ L=1u  
++ W=8u         
+M_M1         N00758 0 N01219 N01219 nfet  
++ L=1u  
++ W=3.5u         
+M_M2         N01142 N01643 N01219 N01219 nfet  
++ L=1u  
++ W=3.5u         
+M_M5         N01219 N01913 N02128 N02128 nfet  
++ L=1u  
++ W=2.3844u         
+M_M7         N01402 N01913 N02128 N02128 nfet  
++ L=1u  
++ W=6.5u         
+M_M8         N01913 N01913 N02128 N02128 nfet  
++ L=1u  
++ W=2.3844u         
+M_M13         N02128 N08621 N08621 N08621 nfet  
++ L=1u  
++ W=1u         
+M_M14         N08664 N08621 N084640 N084640 nfet  
++ L=1u  
++ W=4u         
+R_Rb         N02128 N084640  25k  
+M_M12         N01913 N08039 N08664 N08664 nfet  
++ L=1u  
++ W=1u         
+M_M9         N08039 N01913 N00316 N00316 pfet  
++ L=1u  
++ W=1u         
+M_M10         N01913 N01913 N00316 N00316 pfet  
++ L=1u  
++ W=1u         
+M_M11         N08621 N08039 N08039 N08039 nfet  
++ L=1u  
++ W=1u         
+V_V3         N01643 0 DC 0Vdc AC 0.1Vac 
+
+**** RESUMING simprof.cir ****
+.END
+
+**** 01/09/20 18:48:31 ******* PSpice Lite (March 2016) ******* ID# 10813 ****
+
+ ** Profile: "SCHEMATIC1-simprof"  [ C:\Users\dawnm\Desktop\Steilto\opamp-final\Operational Amplifier\opamp_final-pspicefiles\schemat
+
+
+ ****     MOSFET MODEL PARAMETERS
+
+
+******************************************************************************
+
+
+
+
+               pfet            nfet            
+               PMOS            NMOS            
+       LEVEL    3               3            
+         TPG   -1                            
+           L  100.000000E-06  100.000000E-06 
+           W  100.000000E-06  100.000000E-06 
+          LD   22.000000E-09  164.700000E-09 
+         VTO    -.9056           .786        
+          KP   29.352000E-06   96.379000E-06 
+       GAMMA     .4863           .5863       
+         PHI     .6              .6          
+      LAMBDA    0               0            
+         RSH  104.7            85.45         
+          IS   10.000000E-15   10.000000E-15 
+          JS    0               0            
+          PB     .85             .8          
+        PBSW     .85             .8          
+          CJ  484.470000E-06  385.410000E-06 
+        CJSW  164.570000E-12  139.400000E-12 
+          MJ     .5027          1.1854       
+        MJSW     .217168         .125195     
+        CGSO   53.752000E-12  402.410000E-12 
+        CGDO   53.752000E-12  402.410000E-12 
+        CGBO  336.500000E-12  361.440000E-12 
+        NSUB   18.900000E+15   16.160000E+15 
+         NFS    3.460000E+12    5.000000E+12 
+         TOX   21.200000E-09   21.200000E-09 
+          XJ  200.000000E-09  200.000000E-09 
+          UO  180.2           591.7          
+       UCRIT   10.000000E+03   10.000000E+03 
+        VMAX  373.200000E+03  208.200000E+03 
+       DELTA    1.52             .6967       
+       THETA     .1248           .08122      
+         ETA     .1641           .07066      
+       KAPPA    9.694            .1396       
+      DIOMOD    1               1            
+         VFB    0               0            
+        LETA    0               0            
+        WETA    0               0            
+          U0    0               0            
+        TEMP    0               0            
+         VDD    5               5            
+       XPART    0               0            
+
+
+**** 01/09/20 18:48:31 ******* PSpice Lite (March 2016) ******* ID# 10813 ****
+
+ ** Profile: "SCHEMATIC1-simprof"  [ C:\Users\dawnm\Desktop\Steilto\opamp-final\Operational Amplifier\opamp_final-pspicefiles\schemat
+
+
+ ****     SMALL SIGNAL BIAS SOLUTION       TEMPERATURE =   27.000 DEG C
+
+
+******************************************************************************
+
+
+
+ NODE   VOLTAGE     NODE   VOLTAGE     NODE   VOLTAGE     NODE   VOLTAGE
+
+
+(N00316)    1.8420 (N00758)    -.1322 (N01142)    -.1322 (N01219)    -.8939     
+
+(N01402)     .2654 (N01643)    0.0000 (N01913)    -.7498 (N02128)   -1.8420     
+
+(N08039)    -.7096 (N08621)   -1.2758 (N08664)   -1.4665 (N084640)   -1.8165    
+
+
+
+
+    VOLTAGE SOURCE CURRENTS
+    NAME         CURRENT
+
+    V_Vdd       -2.358E-04
+    V_V2         2.358E-04
+    V_V3         0.000E+00
+
+    TOTAL POWER DISSIPATION   8.69E-04  WATTS
+
+
+
+          JOB CONCLUDED
+
+**** 01/09/20 18:48:31 ******* PSpice Lite (March 2016) ******* ID# 10813 ****
+
+ ** Profile: "SCHEMATIC1-simprof"  [ C:\Users\dawnm\Desktop\Steilto\opamp-final\Operational Amplifier\opamp_final-pspicefiles\schemat
+
+
+ ****     JOB STATISTICS SUMMARY
+
+
+******************************************************************************
+
+
+
+  Total job time (using Solver 1)   =         .03
+
