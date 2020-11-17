@@ -5,8 +5,9 @@ const int n_iter = n;
 const int p_iter = p;
 const int m_iter = m;
 
-void ARRAY_COPY_ALL(ap_uint<8> inArray1[n][m],ap_uint<8> outArray1[n][m],ap_uint<8> inArray2[m][p],ap_uint<8> outArray2[m][p]){
-#pragma HLS DATAFLOW
+
+void ARRAY_COPY1(ap_uint<8> inArray1[n][m],ap_uint<8> outArray1[n][m]){
+
 
 	for(int i = 0; i < n; i++){
 		#pragma HLS loop_tripcount min=n_iter max=n_iter
@@ -17,6 +18,13 @@ void ARRAY_COPY_ALL(ap_uint<8> inArray1[n][m],ap_uint<8> outArray1[n][m],ap_uint
 				outArray1[i][j] = inArray1[i][j];
 			}
 		}
+
+
+
+}
+
+void ARRAY_COPY2(ap_uint<8> inArray2[m][p],ap_uint<8> outArray2[m][p]){
+
 
 	for(int i = 0; i < m; i++){
 		#pragma HLS loop_tripcount min=m_iter max=m_iter
@@ -32,14 +40,17 @@ void ARRAY_COPY_ALL(ap_uint<8> inArray1[n][m],ap_uint<8> outArray1[n][m],ap_uint
 
 void matrix_mul_hw(ap_uint<8> inArray1[n][m], ap_uint<8> inArray2[m][p],
 		unsigned int outArray[n][p]){
-
+	
+	#pragma HLS DATAFLOW
+	
 	ap_uint<8> BRAM_in1[n][m];
 	ap_uint<8> BRAM_in2[m][p];
 
 	#pragma HLS ARRAY_PARTITION variable=BRAM_in1 cyclic factor=m_iter dim=2
 	#pragma HLS ARRAY_PARTITION variable=BRAM_in2 cyclic factor=m_iter dim=1
 
-	ARRAY_COPY_ALL(inArray1,BRAM_in1,inArray2,BRAM_in2);
+	ARRAY_COPY1(inArray1,BRAM_in1);
+	ARRAY_COPY2(inArray2,BRAM_in2);
 
 	int result;
 
