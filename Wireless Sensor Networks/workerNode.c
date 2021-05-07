@@ -17,7 +17,7 @@ immediately interrupt any time-consuming running tasks.
 
 */
 
-
+void getTemperature(){;}
 
 
 void setup(){
