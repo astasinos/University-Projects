@@ -18,14 +18,24 @@
 
  */
 
+ #include <DHT.h>
+ #include <DHT_U.h>
 
-#define gasAnalog 0
-#define gasDigital 8
-
+#define gasAnalog   0
+#define gasDigital  8
+#define DHT11PIN    1
+#define DHTTYPE DHT11
 
 // DS18B20 or DHT11
 void getTemperature(){
-        ;
+
+        float humidity = dht.readHumidity();
+        float temperature = dht.readTemperature();
+        float realfeel = dht.computeHeatIndex(temperature, humidity, false);
+
+
+
+
 }
 
 void getHumidity() {
@@ -38,8 +48,8 @@ void lightsAutoOn(){
 
 int getGasLevels(){
 
-    int gasLevel = analogRead(gasAnalog);
-    return gasLevel;
+        int gasLevel = analogRead(gasAnalog);
+        return gasLevel;
 
 }
 
@@ -47,12 +57,18 @@ void beepBuzzer(){
         ;
 }
 
+DHT dht = DHT(DHTPIN, DHTTYPE);
 
 
 void setup(){
 
+        Serial.begin(9600);
+
         pinMode(gasAnalog, INPUT);
         pinMode(gasDigital, INPUT);
+
+        dht.begin();
+
 
 }
 
