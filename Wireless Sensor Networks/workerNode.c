@@ -26,32 +26,16 @@
 #define DHT11PIN    1
 #define DHTTYPE DHT11
 
-// DS18B20 or DHT11
-void getTemperature(){
-
-        float humidity = dht.readHumidity();
-        float temperature = dht.readTemperature();
-        float realfeel = dht.computeHeatIndex(temperature, humidity, false);
+// NOTE: Sensor Readings do not have to be seperate functions
+// These are just to remind us what sensor readings we must implement.
 
 
-
-
-}
-
-void getHumidity() {
-        ;
-}
 
 void lightsAutoOn(){
         ;
 }
 
-int getGasLevels(){
 
-        int gasLevel = analogRead(gasAnalog);
-        return gasLevel;
-
-}
 
 void beepBuzzer(){
         ;
@@ -75,5 +59,13 @@ void setup(){
 
 void loop(){
 
-        ;
+    // Get temperature, humidity and realfeel values
+    float humidity = dht.readHumidity();
+    float temperature = dht.readTemperature();
+    float realfeel = dht.computeHeatIndex(temperature, humidity, false);
+
+    int gasLevel = analogRead(gasAnalog);
+
+
+
 }
