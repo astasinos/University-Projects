@@ -5,7 +5,8 @@
    BLOCK DIAGRAM:
 
    1. Get Sensor Readings
-   2. Check if dangerous levels have been reached and perform appropriate actions (e.g. beep a buzzer)
+   2. Check if dangerous levels have been reached and perform appropriate actions
+      (e.g. beep a buzzer)
    3. Report readings back to base station along with safety status of the workers
    4. Repeat
 
@@ -18,7 +19,7 @@
  */
 
 void getTemperature(){
-        ;
+        printf("Hello\n", );;
 }
 
 
