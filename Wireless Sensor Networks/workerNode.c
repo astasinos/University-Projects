@@ -18,14 +18,41 @@
 
  */
 
+
+#define gasAnalog 0
+#define gasDigital 8
+
+
+// DS18B20 or DHT11
 void getTemperature(){
-        printf("Hello\n", );;
+        ;
 }
+
+void getHumidity() {
+        ;
+}
+
+void lightsAutoOn(){
+        ;
+}
+
+int getGasLevels(){
+
+    int gasLevel = analogRead(gasAnalog);
+    return gasLevel;
+
+}
+
+void beepBuzzer(){
+        ;
+}
+
 
 
 void setup(){
 
-        ;
+        pinMode(gasAnalog, INPUT);
+        pinMode(gasDigital, INPUT);
 
 }
 
