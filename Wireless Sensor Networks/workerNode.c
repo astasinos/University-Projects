@@ -37,10 +37,10 @@ void lightsAutoOn(){
     // Helmet Led
     int luminoscity = analogRead(photoResistor);
     if (luminoscity < 100) {
-            digitalWrite(helmetLed, LOW);  Turn Helmet Led off
+            digitalWrite(helmetLed, LOW);  // Turn Helmet Led off
     }
     else{
-            digitalWrite(helmetLed, HIGH); Turn Helmet Led on
+            digitalWrite(helmetLed, HIGH); // Turn Helmet Led on
     }
 }
 
