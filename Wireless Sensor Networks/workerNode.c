@@ -18,15 +18,18 @@
 
  */
 
+ #include <SPI.h>
+ #include <RF22.h>
+ #include <RF22Router.h>
  #include <DHT.h>
  #include <DHT_U.h>
 
-#define gasAnalog       0
-#define photoResistor   1
+#define gasAnalog       A0
+#define photoResistor   A1
 #define helmetLed       9
 #define gasDigital      8
 #define DHT11PIN        1
-#define DHTTYPE DHT11
+#define DHTTYPE         DHT11
 
 // NOTE: Sensor Readings do not have to be seperate functions
 // These are just to remind us what sensor readings we must implement.
