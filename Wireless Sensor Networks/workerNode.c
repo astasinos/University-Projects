@@ -21,9 +21,11 @@
  #include <DHT.h>
  #include <DHT_U.h>
 
-#define gasAnalog   0
-#define gasDigital  8
-#define DHT11PIN    1
+#define gasAnalog       0
+#define photoResistor   1
+#define helmetLed       9
+#define gasDigital      8
+#define DHT11PIN        1
 #define DHTTYPE DHT11
 
 // NOTE: Sensor Readings do not have to be seperate functions
@@ -32,7 +34,14 @@
 
 
 void lightsAutoOn(){
-        ;
+    // Helmet Led
+    int luminoscity = analogRead(photoResistor);
+    if (luminoscity < 100) {
+            digitalWrite(helmetLed, LOW);  Turn Helmet Led off
+    }
+    else{
+            digitalWrite(helmetLed, HIGH); Turn Helmet Led on
+    }
 }
 
 
@@ -53,18 +62,27 @@ void setup(){
 
         dht.begin();
 
+        // Helmet Led
+        pinMode(helmetLed, OUTPUT);
+        pinMode(photoResistor, INPUT);
+
 
 }
 
 
 void loop(){
 
-    // Get temperature, humidity and realfeel values
-    float humidity = dht.readHumidity();
-    float temperature = dht.readTemperature();
-    float realfeel = dht.computeHeatIndex(temperature, humidity, false);
+        // Get temperature, humidity and realfeel values
+        float humidity = dht.readHumidity();
+        float temperature = dht.readTemperature();
+        float realfeel = dht.computeHeatIndex(temperature, humidity, false);
 
-    int gasLevel = analogRead(gasAnalog);
+        // Get gas level
+        int gasLevel = analogRead(gasAnalog);
+
+
+        lightsAutoOn();
+
 
 
 
