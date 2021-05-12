@@ -7,6 +7,11 @@
 If someone is in danger beep a buzzer and blink a red led while also printing DANGER!
 Maybe 3 Leds ? One for each worker??
 
+Received message something like T35H23R40G123B0 ? 15-16 Bytes
+Or send each sensor independently?
+
+Implement LCD Display!!!!
+
 */
 
 typedef struct {
@@ -15,10 +20,10 @@ typedef struct {
         float humidity;
         float realfeel;
 
-} DHTReading;
+} worker;
 
 
-void DecodeDHTReadings(char *v, DHTReading *t) {
+void DecodeMessage(const char *v, worker *t) {
 
         char temperature[5] = "";
         char humidity[5] = "";
@@ -38,11 +43,12 @@ void DecodeDHTReadings(char *v, DHTReading *t) {
 
 int main()
 {
-        DHTReading t;
-        DecodeDHTReadings("T34.5H33.99F3", &t);
+        worker t;
+        DecodeMessage("T34.5H33.99F3", &t);
 
         printf("%.2f\n", t.temperature);
         printf("%.2f\n", t.humidity);
         printf("%.2f", t.realfeel);
+
         return 0;
 }
