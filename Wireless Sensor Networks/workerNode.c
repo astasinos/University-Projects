@@ -29,8 +29,9 @@
 #define photoResistor   A1
 #define helmetLed       9
 #define gasDigital      8
-#define DHTPIN        1
+#define DHTPIN          1
 #define DHTTYPE         DHT11
+#define MY_ADDRESS      1
 
 // NOTE: Sensor Readings do not have to be seperate functions
 // These are just to remind us what sensor readings we must implement.

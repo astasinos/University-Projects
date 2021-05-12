@@ -2,6 +2,13 @@
 #include <stdlib.h>
 #include <string.h>
 
+/*
+
+If someone is in danger beep a buzzer and blink a red led while also printing DANGER!
+Maybe 3 Leds ? One for each worker??
+
+*/
+
 typedef struct {
 
         float temperature;
