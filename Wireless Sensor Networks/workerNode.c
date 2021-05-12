@@ -1,3 +1,4 @@
+
 /*
 
    Code that runs on the sensor nodes located on the helmets of the workers.
@@ -28,7 +29,7 @@
 #define photoResistor   A1
 #define helmetLed       9
 #define gasDigital      8
-#define DHT11PIN        1
+#define DHTPIN        1
 #define DHTTYPE         DHT11
 
 // NOTE: Sensor Readings do not have to be seperate functions
