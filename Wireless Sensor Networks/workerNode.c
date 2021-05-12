@@ -20,11 +20,10 @@
 
    What about multihop routing?
 
-   1. Buzzer and vibration sensors.
-   2. Create prototype rf transmitter implementation
-
-   Nodes should probably enter receiver mode at some point because they have to know if an earthquake is occuring....OOOOR maybe we omit that part! Maybe everyone has vibaration?
-   Maybe save vibration for the end?
+   1. Buzzer and vibration sensors and DS18B20.
+   2. Create receiver implementation.
+   3. Begin Base station
+   4. Connect LEDs and LCD
 
  */
 
