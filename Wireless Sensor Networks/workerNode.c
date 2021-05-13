@@ -20,7 +20,7 @@
 
    What about multihop routing?
 
-   
+
    2. Create receiver implementation.
    3. Begin Base station
    4. Connect LEDs and LCD
@@ -62,10 +62,10 @@ void lightsAutoOn(){
 
 
 DHT dht = DHT(DHTPIN, DHTTYPE);
-bool button_pressed = 0;
-bool beepBuzzer = 0;
-bool Danger = 0;
-bool EarthquakeNotice = 0;
+int button_pressed = 0;
+int beepBuzzer = 0;
+int Danger = 0;
+int EarthquakeNotice = 0;
 
 void setup(){
 
@@ -99,6 +99,8 @@ void setup(){
         // Helmet Led
         pinMode(helmetLed, OUTPUT);
         pinMode(photoResistor, INPUT);
+        pinMode(buzzerPin, OUTPUT);
+
 
 
 }
@@ -118,7 +120,7 @@ void loop(){
 
 
         Danger = 1;
-        tone(buzzerPin, 2000, 200);
+        tone(buzzerPin, 2000, 500);
 
     } else {
     Danger = 0;
@@ -138,7 +140,7 @@ void loop(){
         data_read[RF22_ROUTER_MAX_MESSAGE_LEN - 1] = '\0';
         memcpy(data_send, data_read, RF22_ROUTER_MAX_MESSAGE_LEN);
 
-        boolean successful_packet = false;
+        int successful_packet = false;
         int max_delay = 500;
 
         while (!successful_packet)
@@ -158,7 +160,7 @@ void loop(){
                 }
         }
 
-        delay(100); // Wait a little before entering receiver mode
+        delay(200); // Wait a little before entering receiver mode
 
 
         uint8_t buf[RF22_ROUTER_MAX_MESSAGE_LEN];
@@ -167,19 +169,16 @@ void loop(){
         memset(incoming, '\0', RF22_ROUTER_MAX_MESSAGE_LEN);
         uint8_t len = sizeof(buf);
         uint8_t from;
-        int received_value = 0;
 
 
 
-        if (rf22.recvfromAck(buf, &len, &from))
+
+        if (rf22.recvfromAckTimeout(buf, &len, 2000, &from))        // Wait a little just in case of earthquake
         {
                 buf[RF22_ROUTER_MAX_MESSAGE_LEN - 1] = '\0';
                 memcpy(incoming, buf, RF22_ROUTER_MAX_MESSAGE_LEN);
                 Serial.print("got request from : ");
-                Serial.println(from, DEC); //
-                received_value = atoi((char*)incoming);
-                Serial.println(received_value);
-
+                Serial.println(from, DEC);
         }
 
     if(!strcmp(incoming, "EARTHQUAKE")) {
