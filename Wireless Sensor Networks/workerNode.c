@@ -20,7 +20,7 @@
 
    What about multihop routing?
 
-   1. Buzzer and vibration sensors and DS18B20.
+   
    2. Create receiver implementation.
    3. Begin Base station
    4. Connect LEDs and LCD
@@ -37,6 +37,7 @@
 #define photoResistor   A1
 #define helmetLed       9
 #define gasDigital      8
+#define buzzerPin       2
 #define DHTPIN          1
 #define DHTTYPE         DHT11
 #define MY_ADDRESS      1
@@ -58,12 +59,13 @@ void lightsAutoOn(){
 
 
 
-void beepBuzzer(){
-        ;
-}
+
 
 DHT dht = DHT(DHTPIN, DHTTYPE);
-
+bool button_pressed = 0;
+bool beepBuzzer = 0;
+bool Danger = 0;
+bool EarthquakeNotice = 0;
 
 void setup(){
 
@@ -111,7 +113,20 @@ void loop(){
 
         // Get gas level
         float gasLevel = analogRead(gasAnalog);
-        int button_pressed; // !!!!!
+
+        /* if((gaslevel > 100) || (temperature > ...) || button_pressed ||  EarthquakeNotice || .... )  {
+
+
+        Danger = 1;
+        tone(buzzerPin, 2000, 200);
+
+    } else {
+    Danger = 0;
+}
+
+
+        */
+
         lightsAutoOn();
 
         // Serial print values
@@ -119,7 +134,7 @@ void loop(){
         uint8_t data_send[RF22_ROUTER_MAX_MESSAGE_LEN];
         memset(data_read, '\0', RF22_ROUTER_MAX_MESSAGE_LEN);
         memset(data_send, '\0', RF22_ROUTER_MAX_MESSAGE_LEN);
-        sprintf(data_read, "T%.2fH%.2fR%.2fG%.2fB%d", temperature, humidity, realfeel, gasLevel, button_pressed);
+        sprintf(data_read, "T%.2fH%.2fR%.2fG%.2fD%d", temperature, humidity, realfeel, gasLevel, Danger);
         data_read[RF22_ROUTER_MAX_MESSAGE_LEN - 1] = '\0';
         memcpy(data_send, data_read, RF22_ROUTER_MAX_MESSAGE_LEN);
 
@@ -143,5 +158,39 @@ void loop(){
                 }
         }
 
+        delay(100); // Wait a little before entering receiver mode
+
+
+        uint8_t buf[RF22_ROUTER_MAX_MESSAGE_LEN];
+        char incoming[RF22_ROUTER_MAX_MESSAGE_LEN];
+        memset(buf, '\0', RF22_ROUTER_MAX_MESSAGE_LEN);
+        memset(incoming, '\0', RF22_ROUTER_MAX_MESSAGE_LEN);
+        uint8_t len = sizeof(buf);
+        uint8_t from;
+        int received_value = 0;
+
+
+
+        if (rf22.recvfromAck(buf, &len, &from))
+        {
+                buf[RF22_ROUTER_MAX_MESSAGE_LEN - 1] = '\0';
+                memcpy(incoming, buf, RF22_ROUTER_MAX_MESSAGE_LEN);
+                Serial.print("got request from : ");
+                Serial.println(from, DEC); //
+                received_value = atoi((char*)incoming);
+                Serial.println(received_value);
+
+        }
+
+    if(!strcmp(incoming, "EARTHQUAKE")) {
+
+        EarthquakeNotice = 1;
+
+    }
+
+    if(!strcmp(incoming, "SAFE")) {
+
+        EarthquakeNotice = 0;
+    }
 
 }
