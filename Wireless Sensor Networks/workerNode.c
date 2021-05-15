@@ -146,7 +146,7 @@ void loop(){
         while (!successful_packet)
         {
 
-                if (rf22.sendtoWait(data_send, sizeof(data_send), DESTINATION_ADDRESS) != RF22_ROUTER_ERROR_NONE)
+                if (rf22.sendtoWait(data_send, sizeof(data_send), DESTINATION_ADDRESS) != RF22_ROUTER_ERROR_NONE)   // strlen is better here
                 {
                         Serial.println("sendtoWait failed");
                         randNumber=random(200,max_delay);
