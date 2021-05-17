@@ -24,6 +24,8 @@ RF22Router rf22(MY_ADDRESS);
    Implement LCD Display!!!!
    RF22 class versus rf22router? can rf22 receive ? base only rf22
 
+   T35G123D1
+
    rf22.sendtoWait(data_send, sizeof(data_send), RF22_BROADCAST_ADDRESS);
    receiveFromAck is blocking!!!
 
@@ -33,15 +35,15 @@ RF22Router rf22(MY_ADDRESS);
 
 int EarthquakeNotice = 0;
 int successful_packet = 0;
+int randNumber = 0;
+int max_delay = 300;
 int DESTINATION_ADDRESSES[3] = {DESTINATION_ADDRESS_1, DESTINATION_ADDRESS_2, DESTINATION_ADDRESS_3};
-
+unsigned long earthquake_time;
 
 typedef struct {
 
         float temperature;
-        float humidity;
-        float realfeel;
-        float gaslevel;
+        int gaslevel;
         int danger;
         int workerid;
 
@@ -51,23 +53,17 @@ typedef struct {
 
 void DecodeMessage(const char *v, worker *t, int from) {
 
-        char temperature[5] = "";
-        char humidity[5] = "";
-        char realfeel[5] = "";
+        char temperature[6] = "";
         char gaslevel[5] = "";
         char danger[2] = "";
 
 
         int i = 0;
-        while(((*(++v) != 'H') && (temperature[i++] = *v)) || (i = 0));
-        while(((*(++v) != 'R') && (humidity[i++] = *v)) || (i = 0));
-        while(((*(++v) != 'G') && (realfeel[i++] = *v)) || (i = 0));
+        while(((*(++v) != 'G') && (temperature[i++] = *v)) || (i = 0));
         while(((*(++v) != 'D') && (gaslevel[i++] = *v)) || (i = 0));
         while(danger[i++] = *(++v));
 
         t->temperature = atof(temperature);
-        t->humidity = atof(humidity);
-        t->realfeel = atof(realfeel);
         t->gaslevel = atof(gaslevel);
         t->workerid = from;
         t->danger = atoi(danger);
@@ -93,6 +89,8 @@ void setup() {
 
         //rf22.setModemConfig(RF22::OOK_Rb40Bw335  );
         rf22.setModemConfig(RF22::GFSK_Rb125Fd125);
+
+        for(int i = 0 ; i < 3 ; i ++ ) { rf22.addRouteTo(DESTINATION_ADDRESSES[i], DESTINATION_ADDRESSES[i]); }
 }
 
 void loop()
@@ -104,8 +102,8 @@ void loop()
            continue
 
          */
-
-        if(sensingEarthquake == TRUE) {     // only when sensing earthquake
+        float sensingEarthquake  = analogRead(A0);
+        if(sensingEarthquake > 120) {     // only when sensing earthquake
 
                 EarthquakeNotice = 1;
 
@@ -117,7 +115,7 @@ void loop()
                 data_read[RF22_ROUTER_MAX_MESSAGE_LEN - 1] = '\0';
                 memcpy(data_send, data_read, RF22_ROUTER_MAX_MESSAGE_LEN);
 
-                for(int i = 0; i < 3; i++) {
+                for(int i = 0; i < 1; i++) {
                         successful_packet = false;
                         while (!successful_packet)
                         {
@@ -135,12 +133,13 @@ void loop()
                                         Serial.println("sendtoWait Succesful");
                                 }
                         }
+                        earthquake_time = millis();
 
 
                 }
         }
 
-        if((EarthquakeNotice == 1) && (sensingEarthquake == FALSE)) {
+        if((EarthquakeNotice == 1) && (sensingEarthquake <= 120 ) && (millis() - earthquake_time > 5000)) {
 
                 char data_read[RF22_ROUTER_MAX_MESSAGE_LEN];
                 uint8_t data_send[RF22_ROUTER_MAX_MESSAGE_LEN];
@@ -150,7 +149,7 @@ void loop()
                 data_read[RF22_ROUTER_MAX_MESSAGE_LEN - 1] = '\0';
                 memcpy(data_send, data_read, RF22_ROUTER_MAX_MESSAGE_LEN);
 
-                for(int i = 0; i < 3; i++) {
+                for(int i = 0; i < 1; i++) {
                         successful_packet = false;
                         while (!successful_packet)
                         {
@@ -193,10 +192,18 @@ void loop()
                 memcpy(incoming, buf, RF22_ROUTER_MAX_MESSAGE_LEN);
                 Serial.print("got request from : ");
                 Serial.println(from, DEC);
+                Serial.println(incoming);
 
                 worker t;
-                DecodeMessage(incoming, &t, from)         // test that you can pass a char array!
-                printf("Miner %d has temperature %.2f humidity %.2f") // ..............
+                DecodeMessage(incoming, &t, from);         // test that you can pass a char array!
+                Serial.print("Miner ");
+                Serial.print(t.workerid);
+                Serial.print(" has temperature ");
+                Serial.print(t.temperature);
+                Serial.print(" and Gas Level : ");
+                Serial.print(t.gaslevel);
+                Serial.print(" Danger : ");
+                Serial.println(t.danger);
 
                 if(t.danger == 1) {
 

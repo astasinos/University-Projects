@@ -27,19 +27,26 @@
 
  */
 
- #include <SPI.h>
- #include <RF22.h>
- #include <RF22Router.h>
- #include <DHT.h>
- #include <DHT_U.h>
 
-#define gasAnalog       A0
-#define photoResistor   A1
-#define helmetLed       9
-#define gasDigital      8
-#define buzzerPin       2
-#define DHTPIN          1
-#define DHTTYPE         DHT11
+// NODE 1
+
+#include <SPI.h>
+#include <RF22.h>
+#include <RF22Router.h>
+#include <OneWire.h>
+#include <DallasTemperature.h>
+
+
+
+
+
+
+#define gasAnalog       A1
+#define photoResistor   A0
+#define helmetLed       5
+#define buzzerPin       4
+#define buttonPin       6
+#define ONE_WIRE_BUS    3           // FOR DS18B20
 #define MY_ADDRESS      1
 #define DESTINATION_ADDRESS 10 // 10 is Base
 
@@ -50,23 +57,29 @@ void lightsAutoOn(){
         // Helmet Led
         int luminoscity = analogRead(photoResistor);
         if (luminoscity < 100) {
-                digitalWrite(helmetLed, LOW); // Turn Helmet Led off
+                digitalWrite(helmetLed, HIGH); // Turn Helmet Led off
         }
         else{
-                digitalWrite(helmetLed, HIGH); // Turn Helmet Led on
+                digitalWrite(helmetLed, LOW); // Turn Helmet Led on
         }
 }
 
 
 
+OneWire oneWire(ONE_WIRE_BUS);
+
+// Pass our oneWire reference to Dallas Temperature.
+DallasTemperature sensors(&oneWire);
 
 
-DHT dht = DHT(DHTPIN, DHTTYPE);
+
 int button_pressed = 0;
+int button_pressed2 = 0;
 int beepBuzzer = 0;
 int Danger = 0;
 int EarthquakeNotice = 0;
-
+int randNumber = 0;
+int tries = 0;
 void setup(){
 
         Serial.begin(9600);
@@ -92,9 +105,9 @@ void setup(){
         randomSeed(seed);
 
         pinMode(gasAnalog, INPUT);
-        pinMode(gasDigital, INPUT);
+        pinMode(buttonPin, INPUT);
 
-        dht.begin();
+        sensors.begin();
 
         // Helmet Led
         pinMode(helmetLed, OUTPUT);
@@ -109,25 +122,37 @@ void setup(){
 void loop(){
 
         // Get temperature, humidity and realfeel values
-        float humidity = dht.readHumidity();
-        float temperature = dht.readTemperature();
-        float realfeel = dht.computeHeatIndex(temperature, humidity, false);
+        sensors.requestTemperatures();
+        float temperature_val =  sensors.getTempCByIndex(0);
+        char temperature[6];
+        dtostrf(temperature_val, 4, 2, temperature);
 
         // Get gas level
-        float gasLevel = analogRead(gasAnalog);
+        int gasLevel = analogRead(gasAnalog);
 
-        /* if((gaslevel > 100) || (temperature > ...) || button_pressed ||  EarthquakeNotice || .... )  {
-
-
-        Danger = 1;
-        tone(buzzerPin, 2000, 500);
-
-    } else {
-    Danger = 0;
-}
+        button_pressed = digitalRead(buttonPin);
+        if((gasLevel > 800) || (temperature_val > 32.0 ) || button_pressed ||  EarthquakeNotice )  {
 
 
-        */
+           Danger = 1;
+
+
+           } else {
+           Danger = 0;
+           }
+
+
+
+
+         Serial.print("Temperature : ");
+         Serial.print(temperature);
+         Serial.print("   Gas Level: ");
+         Serial.print(gasLevel);
+         Serial.print(" Light value : ");
+         Serial.print(analogRead(photoResistor));
+         Serial.print("  Button : ");
+         Serial.println(button_pressed);
+
 
         lightsAutoOn();
 
@@ -136,18 +161,19 @@ void loop(){
         uint8_t data_send[RF22_ROUTER_MAX_MESSAGE_LEN];
         memset(data_read, '\0', RF22_ROUTER_MAX_MESSAGE_LEN);
         memset(data_send, '\0', RF22_ROUTER_MAX_MESSAGE_LEN);
-        sprintf(data_read, "T%.2fH%.2fR%.2fG%.2fD%d", temperature, humidity, realfeel, gasLevel, Danger);
+        sprintf(data_read, "T%sG%dD%d", temperature, gasLevel, Danger);
         data_read[RF22_ROUTER_MAX_MESSAGE_LEN - 1] = '\0';
         memcpy(data_send, data_read, RF22_ROUTER_MAX_MESSAGE_LEN);
 
         int successful_packet = false;
-        int max_delay = 500;
-
-        while (!successful_packet)
+        int max_delay = 300;
+         tries = 0;
+        while ((tries < 4) && !successful_packet)
         {
 
                 if (rf22.sendtoWait(data_send, sizeof(data_send), DESTINATION_ADDRESS) != RF22_ROUTER_ERROR_NONE)   // strlen is better here
                 {
+                        tries++;
                         Serial.println("sendtoWait failed");
                         randNumber=random(200,max_delay);
                         Serial.println(randNumber);
@@ -155,12 +181,16 @@ void loop(){
                 }
                 else
                 {
+                        tries = 0;
                         successful_packet = true;
+                        Serial.println(data_read);
                         Serial.println("sendtoWait Succesful");
                 }
+
+                if(Danger) tone(buzzerPin, 1000, 300);
         }
 
-        delay(200); // Wait a little before entering receiver mode
+
 
 
         uint8_t buf[RF22_ROUTER_MAX_MESSAGE_LEN];
@@ -173,7 +203,7 @@ void loop(){
 
 
 
-        if (rf22.recvfromAckTimeout(buf, &len, 2000, &from))        // Wait a little just in case of earthquake
+        if ((tries >= 4 ) && rf22.recvfromAckTimeout(buf, &len, 2000, &from))        // Wait a little just in case of earthquake
         {
                 buf[RF22_ROUTER_MAX_MESSAGE_LEN - 1] = '\0';
                 memcpy(incoming, buf, RF22_ROUTER_MAX_MESSAGE_LEN);
@@ -181,15 +211,15 @@ void loop(){
                 Serial.println(from, DEC);
         }
 
-    if(!strcmp(incoming, "EARTHQUAKE")) {
+        if(!strcmp(incoming, "EARTHQUAKE")) {
 
-        EarthquakeNotice = 1;
+                EarthquakeNotice = 1;
 
-    }
+        }
 
-    if(!strcmp(incoming, "SAFE")) {
+        if(!strcmp(incoming, "SAFE")) {
 
-        EarthquakeNotice = 0;
-    }
+                EarthquakeNotice = 0;
+        }
 
 }
