@@ -1,35 +1,3 @@
-
-/*
-
-   Code that runs on the sensor nodes located on the helmets of the workers.
-
-   BLOCK DIAGRAM:
-
-   1. Get Sensor Readings
-   2. Check if dangerous levels have been reached and perform appropriate actions
-      (e.g. beep a buzzer)
-   3. Report readings back to base station along with safety status of the workers
-   4. Repeat
-
- */
-
-
-/*
-
-   TODO:
-
-   What about multihop routing?
-
-
-   2. Create receiver implementation.
-   3. Begin Base station
-   4. Connect LEDs and LCD
-
- */
-
-
-// NODE 1
-
 #include <SPI.h>
 #include <RF22.h>
 #include <RF22Router.h>
@@ -47,8 +15,8 @@
 #define buzzerPin       4
 #define buttonPin       6
 #define ONE_WIRE_BUS    3           // FOR DS18B20
-#define MY_ADDRESS      1
-#define DESTINATION_ADDRESS 10 // 10 is Base
+#define MY_ADDRESS      1           // NODE1
+#define DESTINATION_ADDRESS 10      // 10 is Base
 
 RF22Router rf22(MY_ADDRESS);
 
@@ -74,12 +42,11 @@ DallasTemperature sensors(&oneWire);
 
 
 int button_pressed = 0;
-int button_pressed2 = 0;
-int beepBuzzer = 0;
+unsigned long timenow;
 int Danger = 0;
 int EarthquakeNotice = 0;
 int randNumber = 0;
-int tries = 0;
+
 void setup(){
 
         Serial.begin(9600);
@@ -133,27 +100,27 @@ void loop(){
         button_pressed = digitalRead(buttonPin);
         if((gasLevel > 800) || (temperature_val > 32.0 ) || button_pressed ||  EarthquakeNotice )  {
 
-
-           Danger = 1;
-
-
-           } else {
-           Danger = 0;
-           }
+                tone(buzzerPin, 2000, 500);
+                Danger = 1;
 
 
+        } else {
+                Danger = 0;
+        }
 
 
-         Serial.print("Temperature : ");
-         Serial.print(temperature);
-         Serial.print("   Gas Level: ");
-         Serial.print(gasLevel);
-         Serial.print(" Light value : ");
-         Serial.print(analogRead(photoResistor));
-         Serial.print("  Button : ");
-         Serial.println(button_pressed);
 
+/*
+        Serial.print("Temperature : ");
+        Serial.print(temperature);
+        Serial.print("   Gas Level: ");
+        Serial.print(gasLevel);
+        Serial.print(" Light value : ");
+        Serial.print(analogRead(photoResistor));
+        Serial.print("  Button : ");
+        Serial.println(button_pressed);
 
+*/
         lightsAutoOn();
 
         // Serial print values
@@ -166,60 +133,38 @@ void loop(){
         memcpy(data_send, data_read, RF22_ROUTER_MAX_MESSAGE_LEN);
 
         int successful_packet = false;
-        int max_delay = 300;
-         tries = 0;
-        while ((tries < 4) && !successful_packet)
+        int max_delay = 500;
+
+        if(millis() - timenow > 5000) {
+            timenow = millis();
+        while (!successful_packet)
         {
+
 
                 if (rf22.sendtoWait(data_send, sizeof(data_send), DESTINATION_ADDRESS) != RF22_ROUTER_ERROR_NONE)   // strlen is better here
                 {
-                        tries++;
-                        Serial.println("sendtoWait failed");
+                        Serial.print("sendtoWait failed");
                         randNumber=random(200,max_delay);
+                        serial.print(" : I will wait for ");
                         Serial.println(randNumber);
                         delay(randNumber);
                 }
                 else
                 {
-                        tries = 0;
                         successful_packet = true;
+
+                        Serial.print("sendtoWait Succesful");
+                        Serial.print("I sent the message : ");
                         Serial.println(data_read);
-                        Serial.println("sendtoWait Succesful");
                 }
 
-                if(Danger) tone(buzzerPin, 1000, 300);
-        }
-
-
-
-
-        uint8_t buf[RF22_ROUTER_MAX_MESSAGE_LEN];
-        char incoming[RF22_ROUTER_MAX_MESSAGE_LEN];
-        memset(buf, '\0', RF22_ROUTER_MAX_MESSAGE_LEN);
-        memset(incoming, '\0', RF22_ROUTER_MAX_MESSAGE_LEN);
-        uint8_t len = sizeof(buf);
-        uint8_t from;
-
-
-
-
-        if ((tries >= 4 ) && rf22.recvfromAckTimeout(buf, &len, 2000, &from))        // Wait a little just in case of earthquake
-        {
-                buf[RF22_ROUTER_MAX_MESSAGE_LEN - 1] = '\0';
-                memcpy(incoming, buf, RF22_ROUTER_MAX_MESSAGE_LEN);
-                Serial.print("got request from : ");
-                Serial.println(from, DEC);
-        }
-
-        if(!strcmp(incoming, "EARTHQUAKE")) {
-
-                EarthquakeNotice = 1;
 
         }
+    }
 
-        if(!strcmp(incoming, "SAFE")) {
 
-                EarthquakeNotice = 0;
-        }
+
+
+
 
 }

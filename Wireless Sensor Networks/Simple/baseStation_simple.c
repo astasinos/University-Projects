@@ -13,30 +13,17 @@
 
 RF22Router rf22(MY_ADDRESS);
 
-
 /*
-
-
-
-   Received message something like T35H23R40G123B0 ? 15-16 Bytes
-
-
-   Implement LCD Display!!!!
-   RF22 class versus rf22router? can rf22 receive ? base only rf22
 
    T35G123D1
 
-   rf22.sendtoWait(data_send, sizeof(data_send), RF22_BROADCAST_ADDRESS);
-   receiveFromAck is blocking!!!
+
 
  */
 
-
-
-int EarthquakeNotice = 0;
 int successful_packet = 0;
-int randNumber = 0;
-int max_delay = 300;
+
+
 int DESTINATION_ADDRESSES[3] = {DESTINATION_ADDRESS_1, DESTINATION_ADDRESS_2, DESTINATION_ADDRESS_3};
 unsigned long earthquake_time;
 
@@ -96,85 +83,6 @@ void setup() {
 void loop()
 {
 
-        /*
-           sense EARTHQUAKE
-           if EARTHQUAKE true then broadcast message EARTHQUAKE
-           continue
-
-         */
-        float sensingEarthquake  = analogRead(A0);
-        if(sensingEarthquake > 120) {     // only when sensing earthquake
-
-                EarthquakeNotice = 1;
-
-                char data_read[RF22_ROUTER_MAX_MESSAGE_LEN];
-                uint8_t data_send[RF22_ROUTER_MAX_MESSAGE_LEN];
-                memset(data_read, '\0', RF22_ROUTER_MAX_MESSAGE_LEN);
-                memset(data_send, '\0', RF22_ROUTER_MAX_MESSAGE_LEN);
-                strcpy(data_read, "EARTHQUAKE");
-                data_read[RF22_ROUTER_MAX_MESSAGE_LEN - 1] = '\0';
-                memcpy(data_send, data_read, RF22_ROUTER_MAX_MESSAGE_LEN);
-
-                for(int i = 0; i < 1; i++) {
-                        successful_packet = false;
-                        while (!successful_packet)
-                        {
-
-                                if (rf22.sendtoWait(data_send, sizeof(data_send), DESTINATION_ADDRESSES[i]) != RF22_ROUTER_ERROR_NONE)
-                                {
-                                        Serial.println("sendtoWait failed");        // Add to which node it failed
-                                        randNumber=random(200,max_delay);
-                                        Serial.println(randNumber);
-                                        delay(randNumber);
-                                }
-                                else
-                                {
-                                        successful_packet = true;
-                                        Serial.println("sendtoWait Succesful");
-                                }
-                        }
-                        earthquake_time = millis();
-
-
-                }
-        }
-
-        if((EarthquakeNotice == 1) && (sensingEarthquake <= 120 ) && (millis() - earthquake_time > 5000)) {
-
-                char data_read[RF22_ROUTER_MAX_MESSAGE_LEN];
-                uint8_t data_send[RF22_ROUTER_MAX_MESSAGE_LEN];
-                memset(data_read, '\0', RF22_ROUTER_MAX_MESSAGE_LEN);
-                memset(data_send, '\0', RF22_ROUTER_MAX_MESSAGE_LEN);
-                strcpy(data_read, "SAFE");
-                data_read[RF22_ROUTER_MAX_MESSAGE_LEN - 1] = '\0';
-                memcpy(data_send, data_read, RF22_ROUTER_MAX_MESSAGE_LEN);
-
-                for(int i = 0; i < 1; i++) {
-                        successful_packet = false;
-                        while (!successful_packet)
-                        {
-
-                                if (rf22.sendtoWait(data_send, sizeof(data_send), DESTINATION_ADDRESSES[i]) != RF22_ROUTER_ERROR_NONE)
-                                {
-                                        Serial.println("sendtoWait failed");    // Add to which node it failed
-                                        randNumber=random(200,max_delay);
-                                        Serial.println(randNumber);
-                                        delay(randNumber);
-                                }
-                                else
-                                {
-                                        successful_packet = true;
-                                        Serial.println("sendtoWait Succesful");
-                                }
-                        }
-
-
-                }
-
-                EarthquakeNotice = 0;
-
-        }
-
 
 
 
@@ -207,7 +115,14 @@ void loop()
 
                 if(t.danger == 1) {
 
-                    ;
+                    Serial.print("Dangerous ");
+                    if((t.temperature > 30) && (t.gaslevel > 800)) Serial.print(" Gas and Temperature levels detected! ");
+                    if((t.temperature > 30) && (t.gaslevel < 800)) Serial.print(" Temperature levels deteccted! ");
+                    if((t.temperature < 30) && (t.gaslevel > 800)) Serial.print(" Gas levels deteccted! ");
+                    Serial.print("Miner ");
+                    Serial.print(t.workerid);
+                    Serial.println(" is in DANGER!");
+
 
                 }
         }
