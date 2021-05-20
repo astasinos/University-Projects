@@ -1,33 +1,4 @@
 
-/*
-
-   Code that runs on the sensor nodes located on the helmets of the workers.
-
-   BLOCK DIAGRAM:
-
-   1. Get Sensor Readings
-   2. Check if dangerous levels have been reached and perform appropriate actions
-      (e.g. beep a buzzer)
-   3. Report readings back to base station along with safety status of the workers
-   4. Repeat
-
- */
-
-
-/*
-
-   TODO:
-
-   What about multihop routing?
-
-
-   2. Create receiver implementation.
-   3. Begin Base station
-   4. Connect LEDs and LCD
-
- */
-
-
 // NODE 1
 
 #include <SPI.h>
@@ -47,16 +18,18 @@
 #define buzzerPin       4
 #define buttonPin       6
 #define ONE_WIRE_BUS    3           // FOR DS18B20
-#define MY_ADDRESS      1
+#define MY_ADDRESS      3          // NODE 1
 #define DESTINATION_ADDRESS 10 // 10 is Base
 
 RF22Router rf22(MY_ADDRESS);
 
 
+
+
 void lightsAutoOn(){
         // Helmet Led
         int luminoscity = analogRead(photoResistor);
-        if (luminoscity < 100) {
+        if (luminoscity < 200) {
                 digitalWrite(helmetLed, HIGH); // Turn Helmet Led off
         }
         else{
@@ -74,12 +47,11 @@ DallasTemperature sensors(&oneWire);
 
 
 int button_pressed = 0;
-int button_pressed2 = 0;
-int beepBuzzer = 0;
 int Danger = 0;
 int EarthquakeNotice = 0;
 int randNumber = 0;
-int tries = 0;
+int sendDataNow = 0;
+
 void setup(){
 
         Serial.begin(9600);
@@ -93,14 +65,10 @@ void setup(){
         rf22.setTxPower(RF22_TXPOW_20DBM);
 
         //rf22.setModemConfig(RF22::OOK_Rb40Bw335  );
-        rf22.setModemConfig(RF22::GFSK_Rb125Fd125);
+        rf22.setModemConfig(RF22::GFSK_Rb125Fd125); // 125 kbps
 
-        /* tells my radio card that if I want to send data to
-           DESTINATION_ADDRESS then I will send them directly to
-           DESTINATION_ADDRESS and not to another radio who would act as a relay
-         */
         rf22.addRouteTo(DESTINATION_ADDRESS, DESTINATION_ADDRESS);
-        // test if declaration in setup is valid
+        
         int seed = analogRead(photoResistor);
         randomSeed(seed);
 
@@ -135,7 +103,7 @@ void loop(){
 
 
            Danger = 1;
-
+           tone(buzzerPin, 2000, 500);
 
            } else {
            Danger = 0;
@@ -143,8 +111,9 @@ void loop(){
 
 
 
-
-         Serial.print("Temperature : ");
+         Serial.print("Miner ");
+         Serial.print(MY_ADDRESS);
+         Serial.print(" Temperature : ");
          Serial.print(temperature);
          Serial.print("   Gas Level: ");
          Serial.print(gasLevel);
@@ -156,41 +125,10 @@ void loop(){
 
         lightsAutoOn();
 
-        // Serial print values
-        char data_read[RF22_ROUTER_MAX_MESSAGE_LEN];
-        uint8_t data_send[RF22_ROUTER_MAX_MESSAGE_LEN];
-        memset(data_read, '\0', RF22_ROUTER_MAX_MESSAGE_LEN);
-        memset(data_send, '\0', RF22_ROUTER_MAX_MESSAGE_LEN);
-        sprintf(data_read, "T%sG%dD%d", temperature, gasLevel, Danger);
-        data_read[RF22_ROUTER_MAX_MESSAGE_LEN - 1] = '\0';
-        memcpy(data_send, data_read, RF22_ROUTER_MAX_MESSAGE_LEN);
-
-        int successful_packet = false;
-        int max_delay = 300;
-         tries = 0;
-        while ((tries < 4) && !successful_packet)
-        {
-
-                if (rf22.sendtoWait(data_send, sizeof(data_send), DESTINATION_ADDRESS) != RF22_ROUTER_ERROR_NONE)   // strlen is better here
-                {
-                        tries++;
-                        Serial.println("sendtoWait failed");
-                        randNumber=random(200,max_delay);
-                        Serial.println(randNumber);
-                        delay(randNumber);
-                }
-                else
-                {
-                        tries = 0;
-                        successful_packet = true;
-                        Serial.println(data_read);
-                        Serial.println("sendtoWait Succesful");
-                }
-
-                if(Danger) tone(buzzerPin, 1000, 300);
-        }
-
-
+       
+        
+        
+        
 
 
         uint8_t buf[RF22_ROUTER_MAX_MESSAGE_LEN];
@@ -202,24 +140,72 @@ void loop(){
 
 
 
-
-        if ((tries >= 4 ) && rf22.recvfromAckTimeout(buf, &len, 2000, &from))        // Wait a little just in case of earthquake
+    if (rf22.recvfromAck(buf, &len, &from))
         {
                 buf[RF22_ROUTER_MAX_MESSAGE_LEN - 1] = '\0';
                 memcpy(incoming, buf, RF22_ROUTER_MAX_MESSAGE_LEN);
-                Serial.print("got request from : ");
-                Serial.println(from, DEC);
+                Serial.print("\nBASE HAS REQUESTED DATA\n");
+                //Serial.println(from, DEC);
+               
+
+                
         }
 
-        if(!strcmp(incoming, "EARTHQUAKE")) {
+        if(!strcmp(incoming, "SEND_DATA")) {
+
+                sendDataNow = 1;
+
+        }
+
+         if(!strcmp(incoming, "EARTHQUAKE")) {
 
                 EarthquakeNotice = 1;
 
         }
 
-        if(!strcmp(incoming, "SAFE")) {
 
-                EarthquakeNotice = 0;
+        // Transmitt kommati
+         // Serial print values
+        char data_read[RF22_ROUTER_MAX_MESSAGE_LEN];
+        uint8_t data_send[RF22_ROUTER_MAX_MESSAGE_LEN];
+        memset(data_read, '\0', RF22_ROUTER_MAX_MESSAGE_LEN);
+        memset(data_send, '\0', RF22_ROUTER_MAX_MESSAGE_LEN);
+        sprintf(data_read, "B%dT%sG%dD%d", button_pressed, temperature, gasLevel, Danger);
+        data_read[RF22_ROUTER_MAX_MESSAGE_LEN - 1] = '\0';
+        memcpy(data_send, data_read, RF22_ROUTER_MAX_MESSAGE_LEN);
+
+        
+        int max_delay = 500;  
+
+        
+        int successful_packet = false;
+        if(sendDataNow == 1) {
+        
+        while (!successful_packet)
+        {
+
+                if (rf22.sendtoWait(data_send, sizeof(data_send), DESTINATION_ADDRESS) != RF22_ROUTER_ERROR_NONE)   // strlen is better here
+                {
+                        
+                        Serial.println("sendtoWait failed");
+                        randNumber=random(200,max_delay);
+                        Serial.println(randNumber);
+                        delay(randNumber);
+                }
+                else
+                {
+                        sendDataNow = 0;
+                         successful_packet = true;
+                       // Serial.println(data_read);
+                        //Serial.println("sendtoWait Succesful");
+                }
+
+                
         }
+        
+        }
+      
 
+       
+      
 }

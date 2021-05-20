@@ -11,40 +11,31 @@
 #define DESTINATION_ADDRESS_2 2
 #define DESTINATION_ADDRESS_3 3
 
+
+
+
 RF22Router rf22(MY_ADDRESS);
 
 
-/*
 
 
 
-   Received message something like T35H23R40G123B0 ? 15-16 Bytes
 
 
-   Implement LCD Display!!!!
-   RF22 class versus rf22router? can rf22 receive ? base only rf22
-
-   T35G123D1
-
-   rf22.sendtoWait(data_send, sizeof(data_send), RF22_BROADCAST_ADDRESS);
-   receiveFromAck is blocking!!!
-
- */
-
-
-
-int EarthquakeNotice = 0;
 int successful_packet = 0;
 int randNumber = 0;
-int max_delay = 300;
+int max_delay = 500;
+int ReceivedWorkerCount = 0;
+int sendDataNow = 1;
 int DESTINATION_ADDRESSES[3] = {DESTINATION_ADDRESS_1, DESTINATION_ADDRESS_2, DESTINATION_ADDRESS_3};
-unsigned long earthquake_time;
-
+unsigned long timenow = millis();
+int EarthquakeNotice = 0;
 typedef struct {
 
         float temperature;
         int gaslevel;
         int danger;
+        int button_pressed;
         int workerid;
 
 
@@ -53,12 +44,14 @@ typedef struct {
 
 void DecodeMessage(const char *v, worker *t, int from) {
 
+        char button_pressed[2];
         char temperature[6] = "";
         char gaslevel[5] = "";
         char danger[2] = "";
 
 
         int i = 0;
+        while(((*(++v) != 'T') && (button_pressed[i++] = *v)) || (i = 0));
         while(((*(++v) != 'G') && (temperature[i++] = *v)) || (i = 0));
         while(((*(++v) != 'D') && (gaslevel[i++] = *v)) || (i = 0));
         while(danger[i++] = *(++v));
@@ -67,6 +60,7 @@ void DecodeMessage(const char *v, worker *t, int from) {
         t->gaslevel = atof(gaslevel);
         t->workerid = from;
         t->danger = atoi(danger);
+        t->button_pressed = atoi(button_pressed);
 
 
 
@@ -96,26 +90,18 @@ void setup() {
 void loop()
 {
 
-        /*
-           sense EARTHQUAKE
-           if EARTHQUAKE true then broadcast message EARTHQUAKE
-           continue
 
-         */
-        float sensingEarthquake  = analogRead(A0);
-        if(sensingEarthquake > 120) {     // only when sensing earthquake
-
-                EarthquakeNotice = 1;
-
-                char data_read[RF22_ROUTER_MAX_MESSAGE_LEN];
+        if((millis() - timenow > 20000) && sendDataNow){
+          
+          char data_read[RF22_ROUTER_MAX_MESSAGE_LEN];
                 uint8_t data_send[RF22_ROUTER_MAX_MESSAGE_LEN];
                 memset(data_read, '\0', RF22_ROUTER_MAX_MESSAGE_LEN);
                 memset(data_send, '\0', RF22_ROUTER_MAX_MESSAGE_LEN);
-                strcpy(data_read, "EARTHQUAKE");
+                strcpy(data_read, "SEND_DATA");
                 data_read[RF22_ROUTER_MAX_MESSAGE_LEN - 1] = '\0';
                 memcpy(data_send, data_read, RF22_ROUTER_MAX_MESSAGE_LEN);
 
-                for(int i = 0; i < 1; i++) {
+                for(int i = 0; i < 3; i++) {
                         successful_packet = false;
                         while (!successful_packet)
                         {
@@ -130,26 +116,103 @@ void loop()
                                 else
                                 {
                                         successful_packet = true;
-                                        Serial.println("sendtoWait Succesful");
+                                       // Serial.println("sendtoWait Succesful");
                                 }
                         }
-                        earthquake_time = millis();
+                        
 
 
                 }
+                sendDataNow = 0;
+                
+                ReceivedWorkerCount = 0;
+                
+          
+          
+          }
+
+          // Receive
+
+        uint8_t buf[RF22_ROUTER_MAX_MESSAGE_LEN];
+        char incoming[RF22_ROUTER_MAX_MESSAGE_LEN];
+        memset(buf, '\0', RF22_ROUTER_MAX_MESSAGE_LEN);
+        memset(incoming, '\0', RF22_ROUTER_MAX_MESSAGE_LEN);
+        uint8_t len = sizeof(buf);
+        uint8_t from;
+
+
+        if ((ReceivedWorkerCount < 3) && rf22.recvfromAck(buf, &len, &from))
+        {
+                ReceivedWorkerCount++;
+                buf[RF22_ROUTER_MAX_MESSAGE_LEN - 1] = '\0';
+                memcpy(incoming, buf, RF22_ROUTER_MAX_MESSAGE_LEN);
+                //Serial.print("got request from : ");
+                //Serial.println(from, DEC);
+                //Serial.println(incoming);
+
+                worker t;
+                DecodeMessage(incoming, &t, from);         // test that you can pass a char array!
+                Serial.print("\nMiner ");
+                Serial.print(t.workerid);
+                
+                Serial.print(" has temperature ");
+                Serial.print(t.temperature);
+                Serial.print(" and Gas Level : ");
+                Serial.print(t.gaslevel);
+                Serial.print(" Danger : ");
+                Serial.println(t.danger);
+
+                if(t.danger == 1) {
+                  
+                    if((t.temperature > 32) && (t.gaslevel > 800)) Serial.print(" Dangerous Gas and Temperature levels detected! ");
+                    if((t.temperature > 32) && (t.gaslevel < 800)) Serial.print(" Dangerous Temperature levels deteccted! ");
+                    if((t.temperature < 32) && (t.gaslevel > 800)) Serial.print(" Dangerous Gas levels deteccted! ");
+                    Serial.print("\nMiner ");
+                    Serial.print(t.workerid);
+                    Serial.println(" is in DANGER!\n");
+
+                    
+                    
+                    if(t.button_pressed == 1) {
+
+                      Serial.print("Miner ");
+                      Serial.print(t.workerid);
+                      Serial.println(" is pressing the emergency button!\n");
+                      }
+
+                } 
+                
         }
 
-        if((EarthquakeNotice == 1) && (sensingEarthquake <= 120 ) && (millis() - earthquake_time > 5000)) {
+      if ((ReceivedWorkerCount == 3) && !sendDataNow)
+      { 
+        timenow = millis(); sendDataNow = 1; 
+      } 
+
+
+        
+        float sensingEarthquake  = analogRead(A0);
+        
+    if(sensingEarthquake > 120) {
+      
+        EarthquakeNotice = 1;
+      }
+
+
+
+if(EarthquakeNotice && (ReceivedWorkerCount == 3)) {
 
                 char data_read[RF22_ROUTER_MAX_MESSAGE_LEN];
                 uint8_t data_send[RF22_ROUTER_MAX_MESSAGE_LEN];
                 memset(data_read, '\0', RF22_ROUTER_MAX_MESSAGE_LEN);
                 memset(data_send, '\0', RF22_ROUTER_MAX_MESSAGE_LEN);
-                strcpy(data_read, "SAFE");
+                strcpy(data_read, "EARTHQUAKE");
                 data_read[RF22_ROUTER_MAX_MESSAGE_LEN - 1] = '\0';
                 memcpy(data_send, data_read, RF22_ROUTER_MAX_MESSAGE_LEN);
+               Serial.println("\nWARNING: EARTHQUAKE! CALLING ALL MINERS!");
+               
 
-                for(int i = 0; i < 1; i++) {
+                for(int i = 0; i < 3; i++) {
                         successful_packet = false;
                         while (!successful_packet)
                         {
@@ -164,53 +227,27 @@ void loop()
                                 else
                                 {
                                         successful_packet = true;
-                                        Serial.println("sendtoWait Succesful");
+                                       // Serial.println("sendtoWait Succesful");
                                 }
                         }
 
 
                 }
 
-                EarthquakeNotice = 0;
+               EarthquakeNotice = 0;
 
         }
 
 
 
+        
 
-        uint8_t buf[RF22_ROUTER_MAX_MESSAGE_LEN];
-        char incoming[RF22_ROUTER_MAX_MESSAGE_LEN];
-        memset(buf, '\0', RF22_ROUTER_MAX_MESSAGE_LEN);
-        memset(incoming, '\0', RF22_ROUTER_MAX_MESSAGE_LEN);
-        uint8_t len = sizeof(buf);
-        uint8_t from;
+        
 
 
-        if (rf22.recvfromAck(buf, &len, &from))
-        {
-                buf[RF22_ROUTER_MAX_MESSAGE_LEN - 1] = '\0';
-                memcpy(incoming, buf, RF22_ROUTER_MAX_MESSAGE_LEN);
-                Serial.print("got request from : ");
-                Serial.println(from, DEC);
-                Serial.println(incoming);
 
-                worker t;
-                DecodeMessage(incoming, &t, from);         // test that you can pass a char array!
-                Serial.print("Miner ");
-                Serial.print(t.workerid);
-                Serial.print(" has temperature ");
-                Serial.print(t.temperature);
-                Serial.print(" and Gas Level : ");
-                Serial.print(t.gaslevel);
-                Serial.print(" Danger : ");
-                Serial.println(t.danger);
 
-                if(t.danger == 1) {
+        
 
-                    ;
-
-                }
-        }
-
-        return 0;
+        
 }
