@@ -81,8 +81,8 @@ void setup() {
 
         rf22.setTxPower(RF22_TXPOW_20DBM);
 
-        //rf22.setModemConfig(RF22::OOK_Rb40Bw335  );
-        rf22.setModemConfig(RF22::GFSK_Rb125Fd125);
+        rf22.setModemConfig(RF22::OOK_Rb40Bw335  );
+        //rf22.setModemConfig(RF22::GFSK_Rb125Fd125);
 
         for(int i = 0 ; i < 3 ; i ++ ) { rf22.addRouteTo(DESTINATION_ADDRESSES[i], DESTINATION_ADDRESSES[i]); }
 }
